@@ -83,6 +83,7 @@ async function onlineCreate(){if(onlineBusy)return;onlineBusy=true;try{const gam
 async function onlineJoin(){try{const code=document.getElementById('on-code').value.trim();const r=await rpc('snooker_join',{p_code:code});await onlineAttach(r)}catch(e){onlineMessage(e)}}
 async function onlineEnter(id){try{const r=await rpc('snooker_get',{p_id:id});if(!r)throw Error('Spiel nicht verfügbar');await onlineAttach(r)}catch(e){onlineMessage(e)}}
 async function onlineAttach(r){
+ if(r?.game?.sessionClosed){onlineForgetRoom();throw Error('Diese Session wurde vom Spielleiter geschlossen');}
  if(onlineRoom)await onlineLeave(true);
  onlineSnapshot={active:state.active,games:[...state.games]};onlineRoom=r;
  state.active=r.game?.ended?null:structuredClone(r.game);
@@ -213,9 +214,30 @@ function onlineTeamPanel(){
  ${players.length?players.map(p=>`<div class="history"><span>👤 ${esc(p.name)}<div class="muted">${onlineTeamOf(p.id)<0?'Noch nicht zugeteilt':esc(teams[onlineTeamOf(p.id)]?.name||'')}</div></span>${host?`<div class="row"><select aria-label="Team für ${esc(p.name)}" style="width:auto;max-width:170px" onchange="onlineAssignPlayer('${p.id}',Number(this.value))"><option value="-1" ${onlineTeamOf(p.id)<0?'selected':''}>Ohne Team</option>${teams.map((t,i)=>`<option value="${i}" ${onlineTeamOf(p.id)===i?'selected':''}>${esc(t.name)}</option>`).join('')}</select><button class="btn red small" title="Aus Spielerpool entfernen" onclick="onlineRemovePlayer('${p.id}')">Entfernen</button></div>`:''}</div>`).join(''):'<p class="muted">Noch keine Spieler beigetreten.</p>'}
  </div>`;
 }
-function onlineShowGame(){if(!onlineRoom)return onlineRender();onlinePage=false;tab='play';nav();if(onlineRoom.game?.ended){html(`<h1>🏆 Online-Spiel beendet</h1><div class="card">${resultLine(onlineRoom.game)}<button class="btn alt" onclick="onlineLeave()">Zur Raumübersicht</button></div>`)}else{state.active=structuredClone(onlineRoom.game);originalPlay();document.getElementById('app').insertAdjacentHTML('afterbegin',onlineTeamPanel());document.getElementById('app').insertAdjacentHTML('afterbegin',`<div class="notice">🌐 Live-Raum <b>${esc(onlineRoom.code)}</b> · ${onlineBusy?'🔒 Eingabe wird verarbeitet':'Alle dürfen zählen'} · <button class="btn alt small" onclick="onlineLeave()">Raum verlassen</button></div>`);if(onlineBusy)document.querySelectorAll('#app select').forEach(el=>el.disabled=true);if(onlineBusy)document.querySelectorAll('#app button').forEach(b=>{if(!b.getAttribute('onclick')?.includes('onlineLeave'))b.disabled=true})}}
+function onlineShowGame(){if(!onlineRoom)return onlineRender();onlinePage=false;tab='play';nav();if(onlineRoom.game?.ended){
+ const players=onlinePlayers(),teams=onlineRoom.game.teams||[];
+ html(`<h1>🏆 Spiel beendet · Session läuft weiter</h1><div class="notice">🌐 Raum <b>${esc(onlineRoom.code)}</b> · Alle bleiben im Raum, bis der Spielleiter die Session schließt.</div><div class="card">${resultLine(onlineRoom.game)}</div><div class="card"><h2>👥 Teilnehmer und Teams</h2><div class="grid2">${teams.map((t,i)=>`<div class="team"><b>${esc(t.name)}</b><div class="muted">${players.filter(p=>onlineTeamOf(p.id)===i).map(p=>`👤 ${esc(p.name)}`).join('<div style="height:6px"></div>')||'Keine Spieler zugeteilt'}</div></div>`).join('')}</div><h3>Im Raum (${players.length})</h3>${players.map(p=>`<div class="history">👤 ${esc(p.name)}</div>`).join('')||'<p class="muted">Keine registrierten Teilnehmer</p>'}<p class="muted">Du bleibst in dieser Session – auch beim Neuladen der App.</p>${onlineIsHost()?'<button class="btn red" onclick="onlineCloseSession()">🔒 Session für alle schließen</button>':'<p class="notice">Warte, bis der Spielleiter die Session schließt.</p>'}</div>`);
+ }else{state.active=structuredClone(onlineRoom.game);originalPlay();document.getElementById('app').insertAdjacentHTML('afterbegin',onlineTeamPanel());document.getElementById('app').insertAdjacentHTML('afterbegin',`<div class="notice">🌐 Live-Raum <b>${esc(onlineRoom.code)}</b> · ${onlineBusy?'🔒 Eingabe wird verarbeitet':'Alle dürfen zählen'} · <button class="btn alt small" onclick="onlineLeave()">Raum verlassen</button></div>`);if(onlineBusy)document.querySelectorAll('#app select').forEach(el=>el.disabled=true);if(onlineBusy)document.querySelectorAll('#app button').forEach(b=>{if(!b.getAttribute('onclick')?.includes('onlineLeave'))b.disabled=true})}}
+async function onlineCloseSession(){
+ if(!onlineRoom||!onlineIsHost())return toast('Nur der Spielleiter kann die Session schließen');
+ if(!onlineRoom.game?.ended)return toast('Bitte zuerst das Spiel beenden');
+ if(!confirm('Die Online-Session für ALLE Teilnehmer endgültig schließen? Alle werden aus diesem Raum zurück zur Übersicht geführt. Der Spielstand bleibt gespeichert.'))return;
+ if(onlineBusy)return toast('Bitte kurz warten');
+ onlineBusy=true;
+ try{
+  const current=await rpc('snooker_get',{p_id:onlineRoom.id});
+  if(!current||current.game?.sessionClosed)throw Error('Session ist bereits geschlossen');
+  if(!current.game?.ended)throw Error('Spiel ist noch nicht beendet');
+  const updated=structuredClone(current.game);
+  updated.sessionClosed=new Date().toISOString();
+  const result=await rpc('snooker_commit',{p_id:current.id,p_revision:current.revision,p_game:updated});
+  onlineRoom=result;
+  await onlineLeave(true);
+  toast('Session für alle geschlossen');
+ }catch(e){onlineMessage(e)}finally{onlineBusy=false}
+}
 async function onlineLeave(confirmed=false){if(!confirmed&&!confirm('Diesen Online-Raum wirklich verlassen? Der Spielstand bleibt für alle in Supabase gespeichert.'))return;onlineForgetRoom();if(onlinePoll){clearInterval(onlinePoll);onlinePoll=null}onlineRoom=null;onlineBusy=false;if(onlineSnapshot){state.active=onlineSnapshot.active;state.games=onlineSnapshot.games;onlineSnapshot=null}originalSave();onlineRender()}
-async function onlineRefresh(){if(!onlineRoom||onlineBusy)return;try{const r=await rpc('snooker_get',{p_id:onlineRoom.id});if(!r)return;if(r.revision!==onlineRoom.revision||r.game?.ended!==onlineRoom.game?.ended){onlineNotifyArrivals(onlineRoom,r);onlineRoom=r;state.active=r.game?.ended?null:structuredClone(r.game);if(tab==='play')onlineShowGame();else if(onlinePage)onlineRender()}if(r.game?.ended)onlineShowEndCheers(r)}catch(e){/* offline: nächste Abfrage erneut versuchen */}}
+async function onlineRefresh(){if(!onlineRoom||onlineBusy)return;try{const r=await rpc('snooker_get',{p_id:onlineRoom.id});if(!r)return;if(r.game?.sessionClosed){await onlineLeave(true);toast('Der Spielleiter hat die Session geschlossen.');return;}if(r.revision!==onlineRoom.revision||r.game?.ended!==onlineRoom.game?.ended){onlineNotifyArrivals(onlineRoom,r);onlineRoom=r;state.active=r.game?.ended?null:structuredClone(r.game);if(tab==='play')onlineShowGame();else if(onlinePage)onlineRender()}if(r.game?.ended)onlineShowEndCheers(r)}catch(e){/* offline: nächste Abfrage erneut versuchen */}}
 // Lokale Speicherroutine wird im Online-Modus zu einer atomaren Serveränderung.
 save=function(){if(!onlineRoom)return originalSave();if(!onlineBusy)return;const updated=state.active?structuredClone(state.active):structuredClone(state.games[0]);const previous=onlineRoom;rpc('snooker_commit',{p_id:previous.id,p_revision:previous.revision,p_game:updated}).then(r=>{if(!onlineRoom||onlineRoom.id!==r.id)return;onlineRoom=r;state.active=r.game?.ended?null:structuredClone(r.game);onlineBusy=false;if(r.game?.ended){onlineShowGame();onlineShowEndCheers(r)}else if(tab==='play')onlineShowGame()}).catch(async e=>{onlineBusy=false;onlineMessage(e.message?.includes('KONFLIKT')?'Ein anderer Spieler war schneller. Spielstand wird aktualisiert.':e);try{const fresh=await rpc('snooker_get',{p_id:previous.id});if(fresh){onlineRoom=fresh;state.active=fresh.game?.ended?null:structuredClone(fresh.game)}}catch(_){}if(tab==='play')onlineShowGame()})};
 // Jede Änderung wird sofort gesperrt; die Datenbank entscheidet atomar, wer zuerst war.
