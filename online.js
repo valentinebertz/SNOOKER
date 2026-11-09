@@ -211,6 +211,62 @@ for(const name of ['addPoints','foul','nextTurn','selectTurn','undo','earlyBlack
 }
 // Frühere Inline-Eventhandler nutzen globale Funktionen.
 window.addPoints=globalThis.addPoints;window.foul=globalThis.foul;window.nextTurn=globalThis.nextTurn;window.selectTurn=globalThis.selectTurn;window.undo=globalThis.undo;window.earlyBlack=globalThis.earlyBlack;window.finish=globalThis.finish;window.discard=globalThis.discard;
+
+// Dauerhaft sichtbarer Raumcode für den Ersteller des Online-Spiels.
+// Das Banner gehört zur Seite (nicht zum Spielbereich), damit es auch bei
+// Live-Teamverwaltung, Seitenwechsel und nach Wiederherstellung sichtbar ist.
+(function installHostRoomBanner(){
+ const style=document.createElement('style');
+ style.textContent=`
+  body.snooker-host-room-visible{padding-top:70px!important}
+  #snooker-host-room-banner{position:fixed;top:0;left:0;right:0;z-index:100;
+    background:#102d28;color:#fff;border-bottom:2px solid #eab65c;
+    box-shadow:0 4px 18px #0009;padding:9px 12px;
+    padding-top:max(9px,env(safe-area-inset-top));}
+  #snooker-host-room-banner .host-room-inner{max-width:850px;margin:auto;display:flex;
+    align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  #snooker-host-room-banner .host-room-caption{font-size:12px;color:#b7d6c7}
+  #snooker-host-room-banner .host-room-code{font-size:21px;font-weight:900;
+    letter-spacing:2px;color:#f4c477;user-select:all}
+  #snooker-host-room-banner button{border:1px solid #658b7b;border-radius:10px;
+    background:#31564b;color:white;padding:8px 12px;font:inherit;font-weight:700;cursor:pointer}
+  @media(max-width:390px){#snooker-host-room-banner .host-room-code{font-size:18px;letter-spacing:1px}}
+ `;
+ document.head.appendChild(style);
+ function syncHostRoomBanner(){
+  const shouldShow=!!(onlineRoom&&onlineUser&&onlineRoom.host_id===onlineUser.id&&onlineRoom.code);
+  let banner=document.getElementById('snooker-host-room-banner');
+  document.body.classList.toggle('snooker-host-room-visible',shouldShow);
+  if(!shouldShow){if(banner)banner.remove();return}
+  if(!banner){
+   banner=document.createElement('div');banner.id='snooker-host-room-banner';
+   banner.setAttribute('role','region');banner.setAttribute('aria-label','Aktueller Online-Raumcode');
+   banner.innerHTML='<div class="host-room-inner"><div><div class="host-room-caption">🎱 Dein Online-Raum · LIVE</div><div class="host-room-code"></div></div><button type="button">📋 Code kopieren</button></div>';
+   document.body.appendChild(banner);
+   banner.querySelector('button').addEventListener('click',async()=>{
+    const code=onlineRoom?.code;if(!code)return;
+    try{await navigator.clipboard.writeText(code);toast('Raumcode kopiert: '+code)}
+    catch(_){window.prompt('Raumcode zum Kopieren:',code)}
+   });
+  }
+  banner.querySelector('.host-room-code').textContent=String(onlineRoom.code);
+ }
+ const oldShowGame=onlineShowGame;
+ onlineShowGame=function(...args){const result=oldShowGame(...args);syncHostRoomBanner();return result};
+ const oldRender=onlineRender;
+ onlineRender=function(...args){const result=oldRender(...args);syncHostRoomBanner();return result};
+ const oldGo=go;
+ go=function(...args){const result=oldGo(...args);syncHostRoomBanner();return result};
+ const oldLeave=onlineLeave;
+ onlineLeave=async function(...args){const result=await oldLeave(...args);syncHostRoomBanner();return result};
+ const oldRefresh=onlineRefresh;
+ onlineRefresh=async function(...args){const result=await oldRefresh(...args);syncHostRoomBanner();return result};
+ // Auth/Host-Informationen können beim asynchronen Start eintreffen.
+ const oldAttach=onlineAttach;
+ onlineAttach=async function(...args){const result=await oldAttach(...args);syncHostRoomBanner();return result};
+ syncHostRoomBanner();
+})();
+
 (async()=>{if(!sb)return;try{const {data,error}=await sb.auth.getUser();if(error)throw error;onlineUser=data?.user||null;if(onlineUser)await onlineRestoreRoom()}catch(e){/* Beim nächsten Öffnen erneut versuchen. */}})();
 // Bei Wiederkehr aus dem Hintergrund aktuelle Serverdaten nachladen.
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&onlineRoom)onlineRefresh()});
