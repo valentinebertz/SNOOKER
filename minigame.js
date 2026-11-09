@@ -65,7 +65,19 @@ function respawnCueBall(){
 }
 function resetCueBall(){respawnCueBall()}
 
-function practiceMessage(t){const el=document.getElementById('practice-status');if(el)el.textContent=t}
+function practiceMessage(t){
+ const el=document.getElementById('practice-status');if(!el)return;
+ if(t.startsWith('🎱')){
+  el.textContent='';
+  const ball=document.createElement('span');
+  ball.className='snooker-seven';
+  ball.setAttribute('role','img');
+  ball.setAttribute('aria-label','Schwarze Snookerkugel, 7 Punkte');
+  ball.style.cssText='width:1.3em;height:1.3em;vertical-align:middle;margin-right:.4em;';
+  el.appendChild(ball);
+  el.appendChild(document.createTextNode(t.slice(2).trimStart()));
+ }else el.textContent=t;
+}
 function ptFromEvent(e){
  const rect=practice.canvas.getBoundingClientRect();
  return {x:(e.clientX-rect.left)*PW/rect.width,y:(e.clientY-rect.top)*PH/rect.height};
