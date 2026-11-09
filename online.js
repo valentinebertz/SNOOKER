@@ -145,12 +145,17 @@ async function onlineUpdateGame(change){
  }finally{onlineBusy=false;if(onlineRoom&&tab==='play')onlineShowGame()}
 }
 async function onlineRegisterPlayer(){
- if(!onlineRoom||!onlineUser||onlineRoom.game?.ended)return;
+ if(!onlineRoom||!onlineUser)return;
  try{
   // Registrierung serverseitig atomar, damit Beitritte keine Punkte überschreiben.
   const r=await rpc('snooker_register_player',{p_id:onlineRoom.id});
   if(r){onlineRoom=r;state.active=r.game?.ended?null:structuredClone(r.game);if(tab==='play')onlineShowGame()}
- }catch(e){onlineMessage(e)}
+ }catch(e){
+  console.error('Teilnehmerregistrierung fehlgeschlagen:',e);
+  onlineMessage(e);
+  const app=document.getElementById('app');
+  if(app&&!document.getElementById('online-registration-error'))app.insertAdjacentHTML('afterbegin',`<div id="online-registration-error" class="notice dangerline" role="alert">⚠️ Dein Name konnte nicht in die Teilnehmerliste eingetragen werden: ${esc(e?.message||String(e))}. Bitte den Spielleiter informieren.</div>`);
+ }
 }
 function onlineRebuildTeamNames(game){
  const players=Array.isArray(game.onlinePlayers)?game.onlinePlayers:[];
@@ -218,8 +223,8 @@ function onlineTeamPanel(){
  if(!onlineRoom||onlineRoom.game?.ended)return '';
  const players=onlinePlayers(),teams=onlineRoom.game.teams||[],host=onlineIsHost();
  const pending=players.filter(p=>onlineTeamOf(p.id)<0);
- return `<div class="card"><h2>👥 Live-Teamverwaltung</h2><p class="muted">Alle sehen die Teams sofort. ${host?'Du kannst Spieler auch während der Partie hinzufügen, verschieben und entfernen.':'Nur der Spielleiter verändert die Aufstellung.'}</p>
- ${host&&pending.length?`<div class="notice" role="status">🔔 <b>${pending.length} Spieler warten auf Zuteilung</b><p class="muted">Bitte nacheinander einem Team zuordnen:</p>${pending.map(p=>`<div class="row" style="margin:8px 0"><b class="grow">👤 ${esc(p.name)}</b>${teams.map((t,i)=>`<button class="btn small" onclick="onlineAssignPlayer('${p.id}',${i})">${esc(t.name)}</button>`).join('')}</div>`).join('')}</div>`:''}
+ return `<div class="card"><h2>👥 Live-Teamverwaltung · ${players.length} Teilnehmer</h2>${host?'<button class="btn alt small" onclick="onlineRefresh()">🔄 Teilnehmer aktualisieren</button>':''}<p class="muted">Alle sehen die Teams sofort. ${host?'Du kannst Spieler auch während der Partie hinzufügen, verschieben und entfernen.':'Nur der Spielleiter verändert die Aufstellung.'}</p>
+ ${host&&!pending.length?'<p class="muted">Keine neuen Spieler zur Einteilung. Beigetretene Spieler erscheinen hier automatisch.</p>':''}${host&&pending.length?`<div class="notice" role="status">🔔 <b>${pending.length} Spieler warten auf Zuteilung</b><p class="muted">Bitte nacheinander einem Team zuordnen:</p>${pending.map(p=>`<div class="row" style="margin:8px 0"><b class="grow">👤 ${esc(p.name)}</b>${teams.map((t,i)=>`<button class="btn small" onclick="onlineAssignPlayer('${p.id}',${i})">${esc(t.name)}</button>`).join('')}</div>`).join('')}</div>`:''}
  <div class="grid2" style="margin-top:12px">${teams.map((t,i)=>`<div class="team"><b>${esc(t.name)}</b><div class="muted" style="margin-top:9px">${players.filter(p=>onlineTeamOf(p.id)===i).map(p=>`👤 ${esc(p.name)}`).join('<div style="height:6px"></div>')||'Noch keine Spieler'}</div></div>`).join('')}</div>
  ${host?`<div class="field"><label>Spieler ohne eigenes Konto hinzufügen</label><div class="row"><input id="on-guest-name" class="grow" maxlength="70" placeholder="Spielername" style="width:auto"><button class="btn small" onclick="onlineAddGuest()">+ Hinzufügen</button></div></div>`:''}
  <h3 style="margin-top:17px">Gemeinsamer Spielerpool (${players.length})</h3>
