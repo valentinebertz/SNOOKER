@@ -1,0 +1,258 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0a1718"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SNOOKER"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon-192.png"><link rel="apple-touch-icon" href="./icons/apple-touch-icon.png"><title>SNOOKER · Score & Friends</title><style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#f2f6f4;background:#091719;font-synthesis:none}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 70% 0%,#19382e 0%,#091719 55%);min-height:100dvh}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.35;cursor:not-allowed}.wrap{max-width:850px;margin:auto;padding:20px 16px 105px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.brand{font-size:29px;font-weight:950;letter-spacing:1.5px}.brand b{color:#eab65c}.sub{color:#9fb7ae;font-size:12px;letter-spacing:2px}.pill{border:1px solid #365b4d;border-radius:100px;padding:8px 11px;color:#acd9b8;font-size:12px}.tabs{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;background:#0b2020f5;border-top:1px solid #34534a;padding:8px 6px max(12px,env(safe-area-inset-bottom));z-index:10}.tabs button{background:none;color:#9bb4aa;border:0;flex:1;max-width:165px;padding:9px 2px;font-size:12px}.tabs button.active{color:#f3c67e}.tabs span{display:block;font-size:21px;margin-bottom:4px}.card{background:#122829e8;border:1px solid #2a4b45;border-radius:20px;padding:19px;margin:14px 0;box-shadow:0 8px 26px #0002}h1{font-size:28px;margin:6px 0 16px}h2{font-size:20px;margin:4px 0 14px}h3{margin:8px 0}.muted{color:#a6bbb2;font-size:14px;line-height:1.55}.field{margin:13px 0}.field label{display:block;color:#b8cfc6;font-size:13px;margin-bottom:7px}input,select{width:100%;background:#071a1d;border:1px solid #40615a;color:white;padding:13px;border-radius:11px;min-width:0}input:focus,select:focus{outline:2px solid #eab65c}.btn{border:0;border-radius:12px;padding:13px 16px;background:#e8a84c;color:#17221c;font-weight:800}.btn.alt{background:#28473f;color:#f0f6f2;border:1px solid #45665c}.btn.red{background:#743a3b;color:white}.btn.small{padding:9px 12px;font-size:13px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.grow{flex:1}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.team{border:1px solid #375a50;border-radius:15px;background:#0c2122;padding:15px;min-width:0}.team.current{border-color:#f4bd69;box-shadow:0 0 0 1px #f4bd6955}.team .score{font-size:45px;font-weight:900;line-height:1.2}.team .name{font-size:14px;overflow-wrap:anywhere}.team .players{font-size:12px;color:#a8bfb5;margin-top:5px}.balls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:15px 0}.ball{height:72px;border:1px solid #ffffff55;border-radius:15px;background:#15302d;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;font-weight:900}.sphere{width:39px;height:39px;border-radius:50%;display:grid;place-items:center;box-shadow:inset -7px -9px 10px #0005,inset 4px 5px 9px #fff6,0 3px 7px #0007;color:#fff;text-shadow:0 1px 2px #0009}.ball small{font-size:12px;margin-top:4px}.ball:active{transform:scale(.96)}.ball:disabled{opacity:.24;filter:grayscale(1)}.statusline{padding:13px;background:#203b32;border-radius:12px;border:1px solid #52765d;margin:12px 0}.dangerline{border-color:#9b4c4c;background:#422929}.ballcount{font-size:13px;color:#e9c987}.notice{border-left:3px solid #eab65c;padding:10px 13px;background:#24382f;color:#d6e5dc;border-radius:7px;font-size:13px}.history{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #35534a;padding:13px 0}.history:last-child{border:0}.winner{color:#f2c56f;font-weight:800}.badge{display:inline-block;padding:4px 9px;border-radius:99px;background:#28483e;font-size:12px;color:#c7e6d3}.hidden{display:none!important}.table-art{background:#125d43;border:10px solid #694728;border-radius:70px;max-width:350px;aspect-ratio:1/1.8;margin:12px auto;position:relative;box-shadow:inset 0 0 0 2px #d7b47c}.pocket{position:absolute;width:21px;height:21px;background:#061210;border-radius:50%;transform:translate(-50%,-50%)}.dot{padding:0;border:0;cursor:pointer;z-index:2;position:absolute;width:13px;height:13px;border-radius:50%;transform:translate(-50%,-50%);box-shadow:inset -3px -3px 3px #0007,0 1px 3px #0006}.line{position:absolute;top:74%;left:0;right:0;border-top:2px solid #b1d0a255}.darc{position:absolute;top:74%;left:28%;width:44%;height:15%;border:2px solid #b1d0a255;border-top:0;border-radius:0 0 50% 50%}.statsnum{font-size:30px;font-weight:850;color:#f3c57b}.error{color:#ffaaaa}.pool-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.pool-name{border:1px solid #bb975d;border-radius:999px;background:#28473f;color:#fff;padding:10px 14px;font-weight:650}.pool-name:disabled{opacity:.4}.team-chip{display:inline-flex;align-items:center;gap:7px;margin:3px;padding:7px 10px;background:#25483e;border:1px solid #4b7b68;border-radius:999px;font-size:13px}.team-chip button{background:transparent;color:#f3b9ad;border:0;font-size:19px;padding:0 2px}.modal-cover{position:fixed;inset:0;background:#000b;z-index:30;display:grid;place-items:center;padding:18px}.modal-panel{width:min(100%,440px);max-height:85dvh;overflow:auto;background:#112b28;border:1px solid #c29b5d;border-radius:20px;padding:22px;box-shadow:0 20px 60px #0008}.modal-panel .btn{width:100%;margin:5px 0}.foot{font-size:12px;color:#9fb4aa;margin-top:20px}details{margin:12px 0}summary{cursor:pointer;font-weight:700}#toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);padding:11px 17px;border-radius:12px;background:#e4b56c;color:#15221b;font-weight:700;z-index:20;display:none;max-width:90%;text-align:center}@media(max-width:420px){.wrap{padding:14px 12px 110px}.card{padding:14px}.team .score{font-size:37px}.balls{gap:8px}.ball{height:69px}.brand{font-size:25px}} 
+ /* Spielende: animierter Bierkrug-Jubel */
+ .cheers-cover{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:16px;background:radial-gradient(circle at 50% 35%,#23533ceF,#061714f7 72%);animation:cheersFade .35s ease-out}
+ .cheers-panel{position:relative;overflow:hidden;width:min(100%,490px);max-height:94dvh;overflow-y:auto;border:2px solid #d7a956;border-radius:26px;background:linear-gradient(150deg,#193c30,#0b201e);box-shadow:0 20px 90px #000b,0 0 40px #e4b86b25;padding:22px 18px;text-align:center}
+ .cheers-heading{font-size:clamp(25px,6vw,36px);font-weight:950;color:#f8d78b;margin:6px 0;text-shadow:0 2px 18px #b37c2c70}
+ .cheers-sub{color:#d3e5d6;margin:5px 0 10px}
+ .cheers-stage{height:210px;position:relative;display:flex;justify-content:center;align-items:center;isolation:isolate}
+ .cheers-mug{width:133px;height:163px;filter:drop-shadow(0 9px 8px #0008);transform-origin:50% 75%}
+ .cheers-mug.left{animation:clinkLeft 2.1s cubic-bezier(.22,.7,.3,1) infinite}
+ .cheers-mug.right{animation:clinkRight 2.1s cubic-bezier(.22,.7,.3,1) infinite}
+ .cheers-splash{position:absolute;top:0;left:50%;font-size:27px;color:#fff4cf;opacity:0;pointer-events:none;animation:splashPop 2.1s ease-out infinite}
+ .cheers-splash.s2{animation-delay:.08s;transform:translateX(-50%) rotate(-30deg)}
+ .cheers-splash.s3{animation-delay:.16s}
+ .cheers-score{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:9px;margin:12px 0}
+ .cheers-team{background:#0a2624;border:1px solid #50705b;border-radius:13px;padding:11px 7px}
+ .cheers-team strong{display:block;color:#f5c76c;font-size:29px}
+ .cheers-team span{display:block;overflow-wrap:anywhere;font-size:13px}
+ .cheers-winner{font-size:21px;font-weight:900;color:#ffe0a0;margin:14px 0}
+ .cheers-reason{font-size:12px;color:#b2c9bd;margin:7px 0 14px}
+ .cheers-close{width:100%;margin-top:8px}
+ @keyframes cheersFade{from{opacity:0}to{opacity:1}}
+ @keyframes clinkLeft{0%,12%,72%,100%{transform:translateX(-21px) rotate(-14deg)}31%,42%{transform:translateX(7px) rotate(13deg)}49%{transform:translateX(-4px) rotate(2deg)}}
+ @keyframes clinkRight{0%,12%,72%,100%{transform:translateX(21px) rotate(14deg)}31%,42%{transform:translateX(-7px) rotate(-13deg)}49%{transform:translateX(4px) rotate(-2deg)}}
+ @keyframes splashPop{0%,29%,100%{opacity:0;translate:0 18px;scale:.5}34%{opacity:1;translate:0 -5px;scale:1.25}58%{opacity:0;translate:0 -60px;scale:1}}
+ @media(prefers-reduced-motion:reduce){.cheers-cover,.cheers-mug,.cheers-splash{animation:none!important}.cheers-mug.left{transform:translateX(-3px) rotate(10deg)}.cheers-mug.right{transform:translateX(3px) rotate(-10deg)}}
+ 
+ .pool-item{display:inline-flex;align-items:center;gap:3px;border:1px solid #bb975d;border-radius:14px;background:#203d35;padding:4px;margin:2px 3px 4px 0}
+ .pool-item .pool-name{border:0;background:transparent;padding:8px 7px}
+ .pool-action{border:1px solid #58796b;background:#315348;color:#fff;border-radius:9px;padding:8px 10px;font-size:15px}
+ .pool-action.delete{background:#5a3033;border-color:#885154}
+ .pool-actions-hint{font-size:12px;color:#a6bbb2}
+  .member-switch{border:0;background:transparent;color:inherit;font:inherit;font-weight:700;cursor:pointer;padding:5px 3px}.member-switch:hover{text-decoration:underline} 
+/* Premium Snookertisch – elegantes Tuch, Holzrahmen, Messing und Kugelglanz */
+.table-art{
+  isolation:isolate;overflow:visible;
+  background:
+    radial-gradient(ellipse at 45% 34%,rgba(51,163,113,.23),transparent 62%),
+    repeating-linear-gradient(94deg,rgba(255,255,255,.013) 0 2px,transparent 2px 7px),
+    linear-gradient(105deg,#07553b 0%,#11734e 46%,#07533b 100%);
+  border:11px solid transparent;border-radius:70px;
+  background-clip:padding-box;
+  box-shadow:inset 0 0 0 2px rgba(242,203,125,.74),inset 0 0 0 6px #113e31,inset 12px 0 30px #001a1377,inset -9px 0 24px #001a1360,0 15px 30px #0008,0 0 0 2px #c6974c,0 0 0 9px #674122,0 0 0 12px #b17a3d,0 0 0 14px #3e2416;
+  margin:30px auto 32px;max-width:330px;
+}
+.table-art::before{content:"";position:absolute;inset:-7px;z-index:0;pointer-events:none;border:2px solid #dfb66b;border-radius:66px;box-shadow:0 0 0 2px #1c100b,0 0 0 4px #996936, inset 0 0 18px #002b1b}
+.table-art::after{content:"";position:absolute;inset:8px;z-index:0;pointer-events:none;border:1px solid rgba(237,209,136,.14);border-radius:53px}
+.table-art .pocket{z-index:3;width:22px;height:22px;background:radial-gradient(circle at 40% 35%,#19211b,#010707 62%);border:3px solid #7b5128;box-shadow:inset 1px 2px 5px #000,0 0 0 2px #d2a253,0 2px 5px #0009}
+.table-art .dot{z-index:4;width:15px;height:15px;border:1px solid #ffffffaa;box-shadow:inset -2px -2px 3px #0004,inset 3px 3px 4px #ffffffb8,0 2px 4px #0008,0 0 5px #ffffff35;filter:brightness(1.24) saturate(1.38);transition:filter .18s,scale .18s}
+.table-art .dot:hover,.table-art .dot:focus-visible{scale:1.3;filter:brightness(1.45) saturate(1.55);outline:2px solid #f2c976;outline-offset:3px}
+.table-art .line{border-top:1.5px solid #d4e5b36e}
+.table-art .darc{border-color:#d4e5b36e;border-width:1.5px}
+@media(max-width:400px){.table-art{max-width:calc(100% - 34px);margin:28px auto 31px}}
+
+/* V2.0 Satin-Edition: Taschen in den Tisch eingelassen, statt ausserhalb des Rahmens */
+.table-art{
+  isolation:isolate;
+  overflow:hidden;
+  border:12px solid #623b24;
+  border-radius:54px;
+  background-image:
+    radial-gradient(ellipse at 35% 24%,rgba(226,255,215,.19),transparent 50%),
+    linear-gradient(117deg,rgba(1,27,16,.42) 0%,rgba(255,255,226,.055) 31%,rgba(255,255,255,.12) 46%,rgba(0,35,18,.15) 68%,rgba(0,17,9,.48) 100%),
+    url('./satin-tuch.webp');
+  background-size:cover,cover,cover;
+  background-position:center;
+  box-shadow:inset 0 0 0 3px #ad773c,inset 0 0 0 7px #153f2c,inset 0 0 23px 13px #001d1390,0 12px 30px #0009,0 0 0 2px #d8ad65,0 0 0 6px #4c2a18,0 0 0 9px #9b6838;
+  margin:26px auto 32px;
+}
+.table-art::before{inset:0;border:2px solid #c49a55;border-radius:41px;box-shadow:inset 0 0 0 5px #0d3426,inset 0 0 20px #00271b;z-index:1}
+.table-art::after{inset:11px;border:1px solid #ffffff12;border-radius:32px;z-index:1}
+.table-art .pocket{width:25px;height:25px;z-index:3;border:3px solid #422818;background:radial-gradient(circle at 48% 42%,#121916 0%,#000705 68%);box-shadow:inset 0 0 7px #000,0 0 0 2px #bd9251,0 2px 4px #0009}
+.table-art .dot{z-index:4}
+.table-art .line,.table-art .darc{z-index:2}
+
+/* Snooker-Kö und eigenständiges Übungsspiel */
+.cue-showcase{display:flex;align-items:center;gap:16px;background:linear-gradient(110deg,#0c251e,#1c4131);border:1px solid #87673a;border-radius:14px;padding:12px 16px}
+.cue-showcase img{width:30px;height:175px;object-fit:contain;mix-blend-mode:screen;filter:contrast(1.3);background:#fff;border-radius:5px}
+.cue-showcase .cue-label{font-size:18px;font-weight:800;color:#f2ce83}
+.practice-wrap{max-width:410px;margin:12px auto;touch-action:none;user-select:none;position:relative}
+#practice-canvas{display:block;width:100%;height:auto;touch-action:none;border-radius:20px;box-shadow:0 12px 28px #0008}
+.practice-info{background:#153c2f;border:1px solid #a57a43;border-radius:12px;padding:10px;margin:10px 0;color:#f5dfaa}
+.practice-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.practice-controls .btn{flex:1}
+.practice-meter{height:11px;background:#08241e;border:1px solid #a57a43;border-radius:99px;overflow:hidden}
+.practice-meter>i{display:block;width:0%;height:100%;background:linear-gradient(90deg,#e0ba6b,#e65c35)}
+
+/* Elegantes Spielende-Fenster direkt auf dem Snookertisch */
+.practice-end-overlay{position:absolute;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(1,14,12,.67);border-radius:20px;backdrop-filter:blur(3px);animation:practiceEndFade .3s ease-out}
+.practice-end-overlay[hidden]{display:none!important}
+.practice-end-panel{width:100%;max-width:330px;text-align:center;padding:27px 19px 22px;border:2px solid #d8ad67;border-radius:22px;background:linear-gradient(155deg,#214d3c 0%,#0b2723 60%,#081b1b 100%);box-shadow:0 18px 55px #000b,0 0 28px #e0ad5333,inset 0 1px 0 #ffffff1c;color:#f5f3e9}
+.practice-end-icon{width:76px;height:76px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 28%,#53565a,#101316 62%,#050606);border:3px solid #d6ab63;box-shadow:inset -8px -9px 15px #0009,inset 5px 5px 13px #ffffff24,0 6px 22px #0008;color:#fff;font-size:37px;font-weight:900}
+.practice-end-title{font-size:clamp(23px,6vw,30px);font-weight:950;letter-spacing:.5px;color:#f4d18d;margin:0 0 9px}
+.practice-end-text{font-size:14px;line-height:1.55;color:#d8e7dc;margin:0 0 20px}
+.practice-end-button{width:100%;padding:14px 12px;border:0;border-radius:12px;background:linear-gradient(180deg,#f4d08a,#d99e46);color:#1d271e;font-size:16px;font-weight:850;box-shadow:0 4px 14px #0007}
+.practice-end-button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@keyframes practiceEndFade{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.practice-end-overlay{animation:none}}
+</style></head><body><div class="wrap"><header class="top"><div><div class="brand">SNOO<b>KER</b> 🎱</div><div class="sub">SCORE & FRIENDS · V2.0</div></div><span class="pill">● LOKAL + ONLINE</span></header><main id="app"></main><div class="foot">Lokale Spiele bleiben auf diesem Gerät. Online-Spiele werden mit Supabase synchronisiert.</div></div><nav class="tabs" id="tabs"></nav><div id="toast" role="status"></div><div id="assign-modal" class="hidden" aria-live="polite"></div><div id="cheers-modal" class="hidden"></div><script>
+'use strict';const KEY='snooker-friends-v1';const colors=[['Rot',1,'#c9282e'],['Gelb',2,'#f2d338'],['Grün',3,'#1ba360'],['Braun',4,'#986136'],['Blau',5,'#2377e5'],['Pink',6,'#ec79b3'],['Schwarz',7,'#17191e']];const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));let state={games:[],active:null,playerPool:[]};
+// Neue Installation: keine Beispielspiele oder Demo-Ergebnisse.
+try{const v=JSON.parse(localStorage.getItem(KEY));if(v&&Array.isArray(v.games))state={games:v.games,active:v.active||null,playerPool:Array.isArray(v.playerPool)?v.playerPool:[]}}catch(e){}// Einmalige Migration: Beispieldaten aus dem Spielerpool entfernen, ohne historische Spiele anzutasten.
+function cleanName(n){return String(n||'').trim().replace(/\s+/g,' ').slice(0,70)}
+function addPoolSilently(n){n=cleanName(n);if(n&&!state.playerPool.some(x=>x.toLocaleLowerCase('de')===n.toLocaleLowerCase('de')))state.playerPool.push(n)}
+if(!Array.isArray(state.playerPool))state.playerPool=[];
+// Namenskorrektur auch bei bestehenden Installationen; historische Partien unverändert lassen.
+state.playerPool=state.playerPool.map(n=>cleanName(n)==='Bauyrschan'?'Bauyrshan':n);
+state.playerPool=state.playerPool.filter((n,i,a)=>a.findIndex(x=>x.toLocaleLowerCase('de')===n.toLocaleLowerCase('de'))===i);
+const exampleNames=new Set(['sigmund','karlos','ben','alex']);
+state.playerPool=state.playerPool.filter(n=>!exampleNames.has(cleanName(n).toLocaleLowerCase('de')));
+const seedKey='snooker-friends-v2-default-players-initialized';
+if(!localStorage.getItem(seedKey)||state.playerPool.length===0){
+ ['Valentin','Bauyrshan','Robert','Johann F.','Viktor','Waldemar K.'].forEach(addPoolSilently);
+ try{localStorage.setItem(seedKey,'1')}catch(e){}
+}
+try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}
+let tab='home',mode='classic',teamCount=2,teamDraft=[{name:'Team 1',players:''},{name:'Team 2',players:''},{name:'Team 3',players:''},{name:'Team 4',players:''}],entry='balls';let assignments=[[],[],[],[]];function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){toast('Speichern fehlgeschlagen: Speicher voll?')}}function toast(s){let e=document.getElementById('toast');e.textContent=s;e.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>e.style.display='none',2800)}function html(s){document.getElementById('app').innerHTML=s}function nav(){document.getElementById('tabs').innerHTML=[['home','🏠','Start'],['play','🎱','Spiel'],['history','📅','Historie'],['stats','📊','Statistik'],['rules','📖','Regeln']].map(([id,ic,label])=>`<button class="${tab===id?'active':''}" onclick="go('${id}')"><span>${ic}</span>${label}</button>`).join('')}function go(t){tab=t;nav();render()}function render(){if(tab==='home')home();if(tab==='play')play();if(tab==='history')history();if(tab==='stats')stats();if(tab==='rules')rules()}function home(){html(`<h1>Snooker-Spiel</h1><div class="card"><h2>${state.active?'Laufendes Spiel':'Neues Spiel starten'}</h2>${state.active?`<p class="muted">${esc(state.active.teams.map(t=>t.name).join(' · '))}</p><button class="btn" onclick="go('play')">Spiel fortsetzen →</button>`:`<div class="field"><label>Spielart</label><select id="mode" onchange="mode=this.value;setupFields()"><option value="classic" ${mode==='classic'?'selected':''}>Klassisch – 2 Teams gegeneinander</option><option value="friends" ${mode==='friends'?'selected':''}>Freizeit – 2 bis 4 Teams</option></select></div><div id="setup"></div><button class="btn" onclick="startGame()">🎱 Spiel starten</button>`}</div><div class="card"><h2>👥 Spielerpool</h2><p class="muted">Namen einmal speichern. Beim nächsten Spiel Namen antippen und Team auswählen.</p><div class="row"><input id="new-player" class="grow" style="width:auto" maxlength="70" placeholder="Neuen Spielernamen eingeben" onkeydown="if(event.key==='Enter')addPlayer()"><button class="btn small" onclick="addPlayer()">+ Speichern</button></div><div id="pool-list"></div></div><div class="card"><h2>Letzte Ergebnisse</h2>${state.games.length?state.games.slice(0,3).map(g=>resultLine(g)).join(''):'<p class="muted">Noch keine Spiele gespeichert.</p>'}</div><div class="card"><h2>Deine Daten</h2><p class="muted">Die App speichert Spiele offline. Exportiere regelmäßig ein Backup, besonders vor einem Handywechsel.</p><div class="row"><button class="btn alt" onclick="backup()">⬇ Backup (JSON)</button><button class="btn alt" onclick="document.getElementById('import').click()">⬆ Backup importieren</button><input type="file" id="import" accept=".json,application/json" hidden onchange="importBackup(this)"><button class="btn alt" onclick="csv()">⬇ CSV für Excel</button></div></div>`);if(!state.active)setupFields();renderPool()}function setupFields(){let m=document.getElementById('mode');if(m)mode=m.value;let e=document.getElementById('setup');if(!e)return;e.innerHTML=`${mode==='friends'?`<div class="field"><label>Anzahl Mannschaften</label><select onchange="teamCount=Number(this.value);setupFields()">${[2,3,4].map(n=>`<option ${teamCount===n?'selected':''}>${n}</option>`).join('')}</select></div>`:''}${Array.from({length:mode==='classic'?2:teamCount},(_,i)=>`<div class="grid2"><div class="field"><label>Team ${i+1}</label><input id="team${i}" value="${esc(teamDraft[i].name)}" placeholder="Teamname" oninput="teamDraft[${i}].name=this.value"></div><div class="field"><label>Spieler in Team ${i+1}</label><div id="team-members-${i}">${teamMembers(i)}</div></div></div>`).join('')}<p class="muted">${mode==='classic'?'Offizielle Snooker-Zählung mit zwei Seiten.':'Freizeitmodus: Alle Teams sammeln reihum Punkte. Automatische Kugelreihenfolge wie im klassischen Modus.'}</p>`}function startGame(){if(state.active)return go('play');let n=mode==='classic'?2:teamCount;let teams=teamDraft.slice(0,n).map((t,i)=>({name:t.name.trim()||`Team ${i+1}`,players:assignments[i].join(', '),playerNames:[...assignments[i]],score:0,bestBreak:0}));state.active={id:Date.now(),mode,teams,turn:0,actions:[],started:new Date().toISOString(),breakPoints:0,reds:15,phase:'red',nextColor:2};save();go('play')}
+
+function teamMembers(i){return assignments[i].length?assignments[i].map((n,j)=>`<span class="team-chip"><button type="button" class="member-switch" aria-label="${esc(n)}: Team wechseln" title="Team wechseln" onclick="askSwitchTeam(${i},${j})">👤 ${esc(n)} ⇄</button><button type="button" aria-label="${esc(n)} aus Team entfernen" title="Zurück in den Spielerpool" onclick="removeMember(${i},${j})">×</button></span>`).join(''):'<span class="muted">Noch niemand zugeteilt</span>'}
+function renderPool(){const el=document.getElementById('pool-list');if(!el)return;const n=mode==='classic'?2:teamCount;el.innerHTML=state.playerPool.length?`<div class="pool-buttons">${state.playerPool.map((name,i)=>({name,i})).filter(({name})=>!assignments.some(team=>team.includes(name))).map(({name,i})=>`<span class="pool-item"><button class="pool-name" ${state.active?'disabled title="Während eines laufenden Spiels nicht zuweisbar"':''} onclick="askTeam(${i})">👤 ${esc(name)}</button><button type="button" class="pool-action" aria-label="${esc(name)} bearbeiten" title="Name bearbeiten" onclick="editPlayer(${i})">✎</button><button type="button" class="pool-action delete" aria-label="${esc(name)} entfernen" title="Name entfernen" onclick="deletePlayer(${i})">×</button></span>`).join('')}</div><p class="muted">Antippen → Team wählen. Zugewiesene Namen verschwinden aus der Auswahl und erscheinen oben im Team. Teamname antippen → Teamwechsel bestätigen. Mit ✎ bearbeiten, mit × aus dem Pool entfernen. Bereits gespeicherte Spielergebnisse bleiben unverändert.</p>`:'<p class="muted">Noch keine Spieler gespeichert.</p>';for(let i=0;i<n;i++){const target=document.getElementById('team-members-'+i);if(target)target.innerHTML=teamMembers(i)}}
+function addPlayer(){let el=document.getElementById('new-player');if(!el)return;let name=cleanName(el.value);if(!name)return toast('Bitte einen Namen eingeben');let existing=state.playerPool.findIndex(x=>x.toLocaleLowerCase('de')===name.toLocaleLowerCase('de'));if(existing>=0){el.value='';renderPool();if(!state.active)askTeam(existing);return toast('Name bereits im Spielerpool')}addPoolSilently(name);save();el.value='';renderPool();toast(name+' gespeichert');if(!state.active)askTeam(state.playerPool.length-1)}
+function askTeam(idx){if(state.active)return toast('Teamzuordnung nur vor Spielbeginn');const name=state.playerPool[idx];if(!name)return;const n=mode==='classic'?2:teamCount;const modal=document.getElementById('assign-modal');modal.className='modal-cover';modal.innerHTML=`<div class="modal-panel" role="dialog" aria-modal="true" aria-label="Team für ${esc(name)} wählen"><h2>👤 ${esc(name)}</h2><p class="muted">In welches Team soll ${esc(name)}?</p>${Array.from({length:n},(_,i)=>`<button class="btn alt" onclick="assignPlayer(${idx},${i})">${esc(teamDraft[i].name||'Team '+(i+1))}</button>`).join('')}<button class="btn alt" onclick="closeTeamDialog()">Abbrechen</button></div>`}
+function closeTeamDialog(){const modal=document.getElementById('assign-modal');modal.className='hidden';modal.innerHTML=''}
+function assignPlayer(idx,team){const name=state.playerPool[idx];if(!name)return;assignments.forEach(a=>{const j=a.findIndex(x=>x.toLocaleLowerCase('de')===name.toLocaleLowerCase('de'));if(j>=0)a.splice(j,1)});assignments[team].push(name);closeTeamDialog();renderPool();toast(name+' → '+(teamDraft[team].name||'Team '+(team+1)))}
+
+function editPlayer(idx){
+ const name=state.playerPool[idx];if(!name)return;
+ const modal=document.getElementById('assign-modal');
+ modal.className='modal-cover';
+ modal.innerHTML=`<div class="modal-panel" role="dialog" aria-modal="true" aria-label="Spielername bearbeiten">
+ <h2>✎ Spieler bearbeiten</h2><p class="muted">Bisheriger Name: <b>${esc(name)}</b></p>
+ <div class="field"><label for="edit-player-name">Neuer Name</label><input id="edit-player-name" maxlength="70" value="${esc(name)}" onkeydown="if(event.key==='Enter')saveEditedPlayer(${idx})"></div>
+ <p class="muted">Der Spielerpool und noch nicht gestartete Teamzuordnungen werden aktualisiert. Die Historie abgeschlossener Spiele bleibt unverändert.</p>
+ <button class="btn" onclick="saveEditedPlayer(${idx})">Änderung speichern</button><button class="btn alt" onclick="closeTeamDialog()">Abbrechen</button></div>`;
+ modal.querySelector('#edit-player-name').focus();
+}
+function saveEditedPlayer(idx){
+ const previous=state.playerPool[idx];if(!previous)return closeTeamDialog();
+ const name=cleanName(document.getElementById('edit-player-name')?.value);
+ if(!name)return toast('Bitte einen Namen eingeben');
+ if(state.playerPool.some((n,i)=>i!==idx&&n.toLocaleLowerCase('de')===name.toLocaleLowerCase('de')))return toast('Diesen Namen gibt es bereits');
+ state.playerPool[idx]=name;
+ assignments.forEach(team=>team.forEach((n,j)=>{if(n===previous)team[j]=name}));
+ save();closeTeamDialog();renderPool();toast('Name geändert: '+name);
+}
+function deletePlayer(idx){
+ const name=state.playerPool[idx];if(!name)return;
+ const modal=document.getElementById('assign-modal');
+ modal.className='modal-cover';
+ modal.innerHTML=`<div class="modal-panel" role="dialog" aria-modal="true" aria-label="Spieler entfernen">
+ <h2>🗑 Spieler entfernen</h2><p>Möchtest du <b>${esc(name)}</b> aus dem Spielerpool löschen?</p>
+ <p class="muted">Der Name wird aus den noch nicht gestarteten Teams entfernt. Abgeschlossene Spiele und ihre damaligen Spielernamen bleiben in der Historie erhalten.</p>
+ <button class="btn red" onclick="confirmDeletePlayer(${idx})">Ja, aus Spielerpool entfernen</button><button class="btn alt" onclick="closeTeamDialog()">Abbrechen</button></div>`;
+}
+function confirmDeletePlayer(idx){
+ const name=state.playerPool[idx];if(!name)return closeTeamDialog();
+ state.playerPool.splice(idx,1);
+ assignments.forEach(team=>{for(let i=team.length-1;i>=0;i--)if(team[i]===name)team.splice(i,1)});
+ save();closeTeamDialog();renderPool();toast(name+' aus dem Pool entfernt');
+}
+function askSwitchTeam(team,index){
+ if(state.active)return toast('Teamwechsel nur vor Spielbeginn');
+ const name=assignments[team]?.[index];if(!name)return;
+ const modal=document.getElementById('assign-modal');modal.className='modal-cover';
+ modal.innerHTML=`<div class="modal-panel" role="dialog" aria-modal="true" aria-label="Team wechseln?">
+ <h2>⇄ Team wechseln?</h2><p>Soll <b>${esc(name)}</b> aus <b>${esc(teamDraft[team].name||'Team '+(team+1))}</b> in ein anderes Team wechseln?</p>
+ <button class="btn" onclick="chooseSwitchTeam(${team},${index})">Ja</button>
+ <button class="btn alt" onclick="closeTeamDialog()">Nein</button></div>`;
+}
+function chooseSwitchTeam(team,index){
+ const name=assignments[team]?.[index];if(!name)return closeTeamDialog();
+ const n=mode==='classic'?2:teamCount;
+ const modal=document.getElementById('assign-modal');
+ modal.innerHTML=`<div class="modal-panel" role="dialog" aria-modal="true" aria-label="Neues Team wählen">
+ <h2>Neues Team für ${esc(name)}</h2><p class="muted">Wohin soll ${esc(name)} wechseln?</p>
+ ${Array.from({length:n},(_,i)=>i===team?'':`<button class="btn alt" onclick="switchMember(${team},${index},${i})">${esc(teamDraft[i].name||'Team '+(i+1))}</button>`).join('')}
+ <button class="btn alt" onclick="closeTeamDialog()">Abbrechen</button></div>`;
+}
+function switchMember(from,index,to){
+ if(from===to||to<0||to>=(mode==='classic'?2:teamCount))return;
+ const name=assignments[from]?.[index];if(!name)return closeTeamDialog();
+ assignments[from].splice(index,1);assignments[to].push(name);
+ closeTeamDialog();renderPool();toast(name+' → '+(teamDraft[to].name||'Team '+(to+1)));
+}
+function removeMember(team,index){assignments[team].splice(index,1);renderPool()}
+function ensureGame(g){if(!Number.isInteger(g.reds)){g.reds=15;g.phase='red';g.nextColor=2;toast('Altes Spiel: Kugelstand wurde auf 15 Rot zurückgesetzt. Bitte prüfen.')}if(!g.phase)g.phase='red';if(!g.nextColor)g.nextColor=2}
+function permitted(g,n){if(g.phase==='red')return n===1&&g.reds>0;if(g.phase==='color')return n>=2&&n<=7;if(g.phase==='final')return n===g.nextColor;return false}
+function nextBallLabel(g){if(g.phase==='red')return 'ROT (1)';if(g.phase==='color')return 'BELIEBIGE FARBE (2–7)';if(g.phase==='final')return colors[g.nextColor-1]?.[0].toUpperCase()+' ('+g.nextColor+')';return 'SPIELENDE'}
+function play(){let g=state.active;if(!g){html('<div class="card"><h2>Kein laufendes Spiel</h2><p class="muted">Lege zuerst Mannschaften an.</p><button class="btn" onclick="go(\'home\')">Neues Spiel</button></div>');return}ensureGame(g);html(`<div class="row" style="justify-content:space-between"><h1>Live-Spielstand</h1><span class="badge">${g.mode==='classic'?'Klassisch':'Freizeit'}</span></div><div class="grid2">${g.teams.map((t,i)=>`<div class="team ${g.turn===i?'current':''}" onclick="selectTurn(${i})"><div class="name">${esc(t.name)}</div><div class="score">${t.score}</div><div class="players">${esc(t.players)||'Keine Spielernamen'}</div>${g.turn===i?'<span class="badge">● Am Zug</span>':''}</div>`).join('')}</div><div class="card"><h2>Punkte erfassen</h2><div class="statusline"><b>Nächste Kugel: ${nextBallLabel(g)}</b><div class="ballcount">🔴 Noch ${g.reds} von 15 roten Kugeln · ${g.phase==='final'?'Schlussfarben':'Farben werden wieder aufgesetzt'}</div></div><p class="muted">Für <b>${esc(g.teams[g.turn].name)}</b> · Laufendes Break: ${g.breakPoints}</p><div class="row"><button class="btn ${entry==='balls'?'':'alt'} small" onclick="entry='balls';render()">🎱 Kugelfarben</button><button class="btn ${entry==='numbers'?'':'alt'} small" onclick="entry='numbers';render()">🔢 Zahlen</button></div>${entry==='balls'?`<div class="balls">${colors.map(([name,n,color])=>`<button class="ball" ${permitted(g,n)?'':'disabled'} onclick="addPoints(${n})"><span class="sphere" style="background:${color}">${n}</span><small>${name}</small></button>`).join('')}</div>`:`<div class="grid3" style="margin:16px 0">${[1,2,3,4,5,6,7].map(n=>`<button class="btn alt" ${permitted(g,n)?'':'disabled'} onclick="addPoints(${n})">+ ${n} · ${colors[n-1][0]}</button>`).join('')}</div>`}<div class="row"><button class="btn alt" onclick="undo()">↶ Rückgängig</button><button class="btn alt" onclick="nextTurn()">↪ Nächstes Team</button></div><details><summary>Foul / Strafpunkte</summary><p class="muted">Foulpunkte gehen an die Gegenseite (im Freizeitmodus an das nächste Team). Beim Teamwechsel beginnt der neue Spieler mit Rot, solange noch rote Kugeln liegen. Nach der letzten Roten beginnt bei einem Wechsel die Schlussphase.</p><div class="row">${[4,5,6,7].map(n=>`<button class="btn alt small" onclick="foul(${n})">+${n} Foul</button>`).join('')}</div></details><div class="statusline dangerline"><b>Hausregel: Schwarz vorzeitig versenkt</b><p class="muted">Nur antippen, wenn Schwarz regelwidrig vorzeitig fällt. Normales Schwarz nach Rot über die Kugeltaste zählen.</p><button class="btn red" onclick="earlyBlack()">⚫ Schwarz vorzeitig – Spiel beenden</button></div></div><div class="card"><h2>Spielaktionen</h2><p class="muted">${g.actions.length?g.actions.slice(-5).reverse().map(a=>`${esc(g.teams[a.team].name)}: ${a.kind==='turn'?'Teamwechsel':(a.kind==='foul'?'Foul +':'+')+a.points}`).join(' · '):'Noch keine Punkte eingetragen.'}</p><div class="row"><button class="btn" onclick="finish()">🏆 Spiel beenden</button><button class="btn red small" onclick="discard()">Spiel verwerfen</button></div></div>`)}
+function snapshot(g){return {turn:g.turn,breakPoints:g.breakPoints,reds:g.reds,phase:g.phase,nextColor:g.nextColor,best:g.teams.map(t=>t.bestBreak)}}
+function changeTurn(g,i){
+ if(i===g.turn)return false;
+ const before=snapshot(g);
+ // Jeder neue Spieler beginnt mit Rot, solange noch rote Kugeln vorhanden sind.
+ // Nach der letzten Roten beginnt die Schlussphase, falls die letzte Farbchance ausgelassen wurde.
+ if(g.reds>0)g.phase='red';
+ else if(g.phase==='color'){g.phase='final';g.nextColor=2;}
+ g.turn=i;g.breakPoints=0;
+ g.actions.push({kind:'turn',team:i,points:0,before});
+ return true;
+}
+function selectTurn(i){let g=state.active;if(!g)return;ensureGame(g);if(changeTurn(g,i)){save();render();toast('Team gewechselt: '+nextBallLabel(g))}}
+
+function addPoints(n){let g=state.active;if(!g)return;ensureGame(g);if(!permitted(g,n))return toast('Diese Kugel ist gerade nicht erlaubt');let before=snapshot(g),i=g.turn;g.teams[i].score+=n;g.breakPoints+=n;g.teams[i].bestBreak=Math.max(g.teams[i].bestBreak,g.breakPoints);if(g.phase==='red'){g.reds--;g.phase='color'}else if(g.phase==='color'){g.phase=g.reds===0?'final':'red';g.nextColor=2}else if(g.phase==='final'){g.nextColor++;if(g.nextColor>7)g.phase='done'}g.actions.push({kind:'pot',team:i,points:n,before});save();if(g.phase==='done'){completeGame('Alle Schlussfarben versenkt');return}render()}
+function foul(n){let g=state.active;if(!g)return;let before=snapshot(g),i=g.turn,target=(i+1)%g.teams.length;g.teams[target].score+=n;g.actions.push({kind:'foul',team:target,points:n,before});g.breakPoints=0;save();render();toast(`${n} Strafpunkte für ${g.teams[target].name}`)}
+function nextTurn(){let g=state.active;if(!g)return;ensureGame(g);if(changeTurn(g,(g.turn+1)%g.teams.length)){save();render()}}
+function undo(){let g=state.active;if(!g||!g.actions.length)return toast('Keine Aktion zum Rückgängigmachen');let a=g.actions.pop();if(a.kind!=='turn')g.teams[a.team].score-=a.points;if(a.before){g.turn=a.before.turn;g.breakPoints=a.before.breakPoints;g.reds=a.before.reds;g.phase=a.before.phase;g.nextColor=a.before.nextColor;g.teams.forEach((t,i)=>t.bestBreak=a.before.best[i]||0)}else{g.turn=a.kind==='foul'?(a.team-1+g.teams.length)%g.teams.length:a.team;g.breakPoints=a.prevBreak||0}save();render()}
+function beerMug(side){
+ const flip=side==='left'?'transform="translate(150 0) scale(-1 1)"':'';
+ return `<svg class="cheers-mug ${side}" viewBox="0 0 150 180" role="img" aria-label="Bierkrug" xmlns="http://www.w3.org/2000/svg"><g ${flip}>
+ <path d="M104 48 H117 Q143 48 141 82 Q139 116 108 115" fill="none" stroke="#e8b84d" stroke-width="14"/>
+ <path d="M23 38 H110 L105 151 Q68 165 28 151 Z" fill="#b56c17" stroke="#ffd36b" stroke-width="5"/>
+ <path d="M30 46 H101 L97 142 Q65 151 35 142 Z" fill="#efaa26"/>
+ <path d="M38 50 L46 141 M59 49 L63 144 M81 48 L79 143" stroke="#ffe6a0" stroke-width="6" opacity=".62"/>
+ <path d="M21 44 Q11 30 27 21 Q34 7 49 17 Q66 3 77 17 Q96 7 106 23 Q120 25 110 45 Q104 53 91 46 Q80 60 69 46 Q57 56 47 45 Q31 56 21 44Z" fill="#fff5db" stroke="#fffdf1" stroke-width="3"/>
+ <path d="M31 44 Q27 61 36 67 Q45 72 47 60 L50 44 M83 44 Q84 65 93 65 Q103 61 99 45" fill="#fff5db"/>
+ <path d="M24 152 Q66 165 106 152" fill="none" stroke="#ffe2a0" stroke-width="5"/>
+ </g></svg>`;
+}
+function closeCheers(){const modal=document.getElementById('cheers-modal');modal.className='hidden';modal.innerHTML=''}
+function showCheers(g){
+ const modal=document.getElementById('cheers-modal');
+ modal.className='cheers-cover';
+ modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-label','Spiel beendet – Prost');
+ modal.innerHTML=`<div class="cheers-panel"><div class="cheers-heading">🍻 PROST! 🍻</div><p class="cheers-sub">Das Spiel ist beendet!</p>
+ <div class="cheers-stage">${beerMug('left')}${beerMug('right')}<span class="cheers-splash">💦</span><span class="cheers-splash s2">🍺</span><span class="cheers-splash s3">✨</span></div>
+ <div class="cheers-winner">🏆 ${g.winners.length===1?'Gewinner: '+esc(g.winners[0]):'Unentschieden!'}</div>
+ <div class="cheers-score">${g.teams.map(t=>`<div class="cheers-team"><span>${esc(t.name)}</span><strong>${t.score}</strong><span>Punkte</span></div>`).join('')}</div>
+ <p class="cheers-reason">${esc(g.endReason||'Spiel beendet')} · ${formatTime(g.ended)}</p>
+ <button class="btn cheers-close" onclick="closeCheers()">🎉 Ergebnis ansehen</button></div>`;
+ modal.querySelector('button').focus();
+}
+function completeGame(reason){let g=state.active;if(!g)return;let max=Math.max(...g.teams.map(t=>t.score));g.winners=g.teams.filter(t=>t.score===max).map(t=>t.name);g.ended=new Date().toISOString();g.endReason=reason;state.games.unshift(g);state.active=null;save();go('history');showCheers(g)}
+function earlyBlack(){let g=state.active;if(!g)return;if(!confirm('Schwarz vorzeitig versenkt? Das Spiel wird SOFORT beendet und die bisherigen Punkte werden gewertet.'))return;completeGame('Schwarz vorzeitig versenkt (Hausregel)')}
+function finish(){if(!state.active)return;if(!confirm('Spiel beenden und Ergebnis in der Historie speichern?'))return;completeGame('Manuell beendet')}
+function discard(){if(confirm('Laufendes Spiel wirklich löschen?')){state.active=null;save();go('home')}}
+function formatTime(value){if(!value)return 'Nicht gespeichert';const d=new Date(value);return Number.isNaN(d.getTime())?'Nicht gespeichert':d.toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false})+' Uhr'}function lastPlayed(){const dated=state.games.filter(g=>g.ended||g.started).sort((a,b)=>new Date(b.ended||b.started)-new Date(a.ended||a.started));return dated[0]||null}function resultLine(g){return `<div class="history"><div><b>${esc(g.teams.map(t=>t.name).join(' · '))}</b><div class="muted">👥 ${g.teams.map((t,i)=>`<b>${esc(t.name)}:</b> ${esc((Array.isArray(t.playerNames)?t.playerNames.join(', '):t.players)||'Keine Namen erfasst')}`).join(' · ')}</div><div class="muted">🕒 Beginn: <b>${formatTime(g.started)}</b></div><div class="muted">🏁 Ende: <b>${formatTime(g.ended)}</b></div><div class="muted">${g.mode==='classic'?'Klassisch':'Freizeit'}${g.endReason?' · '+esc(g.endReason):''}</div><div class="winner">🏆 ${esc((g.winners||[]).join(' & ')||'Unentschieden')}</div></div><div style="font-weight:850;white-space:nowrap">${g.teams.map(t=>t.score).join(' : ')}</div></div>`}// Einzelne Spiele und auf Wunsch die gesamte Historie entfernen. Spielerpool bleibt erhalten.
+function askDeleteGame(index){
+ const g=state.games[index];if(!g)return;
+ const label=g.teams.map(t=>t.name).join(' · ');
+ const when=formatTime(g.ended||g.started);
+ if(!confirm('Dieses gespeicherte Spiel wirklich löschen?\n\n'+label+'\n'+when+'\n\nDie Löschung kann nur mit einem vorherigen Backup rückgängig gemacht werden.'))return;
+ state.games.splice(index,1);save();render();toast('Spiel aus der Historie gelöscht');
+}
+function askClearHistory(){
+ if(!state.games.length)return;
+ if(!confirm('Wirklich alle '+state.games.length+' gespeicherten Spiele löschen?\n\nSpielerpool und laufendes Spiel bleiben erhalten. Die Löschung kann nur mit einem vorherigen Backup rückgängig gemacht werden.'))return;
+ state.games=[];save();render();toast('Spielhistorie vollständig gelöscht');
+}
+function history(){let last=lastPlayed();let ordered=[...state.games].sort((a,b)=>new Date(b.ended||b.started||0)-new Date(a.ended||a.started||0));html(`<h1>Spielhistorie</h1><div class="card"><h2>🕒 Zuletzt gespielt</h2>${last?`<div class="statsnum" style="font-size:23px">${formatTime(last.ended||last.started)}</div><p class="muted">${esc(last.teams.map(t=>t.name).join(' · '))}</p>`:'<p class="muted">Noch kein abgeschlossenes Spiel vorhanden.</p>'}</div><div class="card"><h2>Alle Spiele</h2>${ordered.length?ordered.map(g=>`<div class="history-entry">${resultLine(g)}<div class="row" style="justify-content:flex-end;margin:0 0 12px"><button class="btn red small" type="button" onclick="askDeleteGame(${state.games.indexOf(g)})">🗑 Dieses Spiel löschen</button></div></div>`).join(''):'<p class="muted">Noch keine Spiele gespeichert. Die Historie ist bei einer neuen Installation leer.</p>'}</div><div class="row"><button class="btn alt" onclick="csv()">CSV exportieren</button><button class="btn alt" onclick="backup()">Backup exportieren</button>${state.games.length?'<button class="btn red" onclick="askClearHistory()">🗑 Gesamte Historie löschen</button>':''}</div>`)}function stats(){let games=state.games;let teamMap={};games.forEach(g=>g.teams.forEach(t=>{let k=t.name;let s=teamMap[k]||(teamMap[k]={games:0,wins:0,points:0,best:0});s.games++;s.points+=t.score;s.best=Math.max(s.best,t.bestBreak||0);if((g.winners||[]).includes(k))s.wins++}));let items=Object.entries(teamMap).sort((a,b)=>b[1].wins-a[1].wins);html(`<h1>Statistiken</h1><div class="grid2"><div class="card"><div class="statsnum">${games.length}</div><div class="muted">Gespielte Partien</div></div><div class="card"><div class="statsnum">${items.length}</div><div class="muted">Verschiedene Teams</div></div></div><div class="card"><h2>Team-Rangliste</h2>${items.length?items.map(([name,s],i)=>`<div class="history"><div><b>${i+1}. ${esc(name)}</b><div class="muted">${s.games} Spiele · ${s.points} Punkte · bestes Break ${s.best}</div></div><span class="winner">${s.wins} Siege</span></div>`).join(''):'<p class="muted">Nach dem ersten abgeschlossenen Spiel erscheinen hier Statistiken.</p>'}</div>`)}function rules(){html(`<h1>Regeln & Tischaufbau</h1><div class="card"><h2>🎱 Snooker-Mini-Spiel</h2>
+
+
+<div class="practice-wrap"><canvas id="practice-canvas" width="420" height="720" aria-label="Interaktives Snooker-Mini-Spiel"></canvas><div class="practice-end-overlay" id="practice-end-overlay" role="dialog" aria-modal="true" aria-labelledby="practice-end-title" hidden><div class="practice-end-panel"><div class="practice-end-icon" aria-hidden="true">7</div><h2 class="practice-end-title" id="practice-end-title">Spiel beendet!</h2><p class="practice-end-text" id="practice-end-text">Die schwarze Kugel wurde versenkt. Der Tisch ist leer. Stelle die Kugeln neu auf, um eine neue Partie zu beginnen.</p><button class="practice-end-button" type="button" onclick="resetPractice()">Tisch neu aufstellen</button></div></div></div>
+<div class="practice-info" id="practice-status" role="status">🎯 Zielen: Tisch berühren und halten · Loslassen: Stoßen</div>
+<div class="practice-meter" aria-label="Stoßkraft"><i id="practice-power"></i></div>
+<div class="practice-controls"><button class="btn alt" type="button" onclick="resetPractice()">Tisch neu aufstellen</button><button class="btn alt" type="button" onclick="resetCueBall()">⚪ Weiß neu setzen</button></div>
+<p class="muted">Übungsmodus mit vereinfachter Kugelphysik. Er ist kein vollständiger Snooker-Simulator: Effet, Reibung, Banden- und Kugelkollisionen sind näherungsweise berechnet.</p></div><div class="card"><h2>Farbwerte</h2><div class="grid2">${colors.map(([name,n,c])=>`<div class="row"><span class="sphere" style="width:28px;height:28px;background:${c}"></span><span>${name}: <b>${n}</b></span></div>`).join('')}</div></div><div class="card"><h2>Kurzregeln</h2><p class="muted">Im klassischen Snooker wird zunächst abwechselnd eine rote Kugel (1 Punkt) und eine beliebige Farbe (2–7 Punkte) gespielt. Solange rote Kugeln vorhanden sind, kommen versenkte Farben wieder auf ihre Markierung. Nach der letzten Roten darf noch eine Farbe nach Wahl gespielt werden; erst danach werden Gelb, Grün, Braun, Blau, Pink und Schwarz in dieser Reihenfolge endgültig versenkt.</p><p class="muted">Bei Fouls erhält der Gegner je nach Situation mindestens 4 und höchstens 7 Punkte. Der Sieger eines Frames ist die Seite mit den meisten Punkten nach dem Ende des Frames. Bei Gleichstand wird im offiziellen Spiel die schwarze Kugel erneut aufgesetzt.</p><div class="notice">Beide Spielarten verwenden die automatische Kugelreihenfolge. Die Hausregel „Schwarz vorzeitig“ beendet ein Spiel sofort. Fouls und Sonderfälle werden nicht vollständig automatisch geprüft.</div></div>`);initPractice()}function ballInfo(c){const info={'#ffffff':'Weiß: Spielball. Beim Anstoß innerhalb des D frei platzieren.','#ffdf00':'Gelb: 2 Punkte. Auf der Baulk-Linie links (vom Anstoßende gesehen).','#00c54a':'Grün: 3 Punkte. Auf der Baulk-Linie rechts (vom Anstoßende gesehen).','#b77a38':'Braun: 4 Punkte. Mittelpunkt der Baulk-Linie.','#006dff':'Blau: 5 Punkte. Exakt in der Tischmitte.','#ff67b5':'Pink: 6 Punkte. Auf dem Pink-Spot unmittelbar vor der Spitze des roten Dreiecks in Richtung Tischmitte.','#151515':'Schwarz: 7 Punkte. Black-Spot zwischen rotem Dreieck und oberer kurzen Bande.','#ff172b':'Rot: 1 Punkt pro Kugel. 15 Kugeln bilden ein enges Dreieck; die Spitze zeigt Richtung Pink.'};toast(info[c]||'Snookerkugel')}function download(name,blob){let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}function backup(){download('SNOOKER-Backup-'+new Date().toISOString().slice(0,10)+'.json',new Blob([JSON.stringify({app:'SNOOKER',version:1,exported:new Date().toISOString(),...state},null,2)],{type:'application/json'}))}async function importBackup(el){let f=el.files[0];if(!f)return;try{let data=JSON.parse(await f.text());if(!Array.isArray(data.games)||!('active' in data))throw Error('Ungültige Datei');if(!confirm('Bestehende Historie und laufendes Spiel durch das Backup ersetzen?'))return;state={games:data.games,active:data.active,playerPool:Array.isArray(data.playerPool)?data.playerPool:state.playerPool};state.playerPool=state.playerPool.filter(n=>!exampleNames.has(cleanName(n).toLocaleLowerCase('de')));save();go('home');toast('Backup importiert')}catch(e){toast('Import fehlgeschlagen: ungültiges Backup')}finally{el.value=''}}function csv(){let rows=[['Spielbeginn','Spielende','Spielart','Team','Spieler','Punkte','Gewonnen','Bestes Break']];state.games.forEach(g=>g.teams.forEach(t=>rows.push([g.started||'',g.ended||'',g.mode==='classic'?'Klassisch':'Freizeit',t.name,t.players,t.score,(g.winners||[]).includes(t.name)?'Ja':'Nein',t.bestBreak||0])));let csv='\ufeff'+rows.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(';')).join('\r\n');download('SNOOKER-Ergebnisse.csv',new Blob([csv],{type:'text/csv;charset=utf-8'}))}document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeTeamDialog();closeCheers()}});if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));nav();render();
+</script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script><script src="./config.js"></script><script src="./online.js"></script><script src="./minigame.js"></script></body></html>

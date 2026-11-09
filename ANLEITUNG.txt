@@ -1,0 +1,34 @@
+SNOOKER ONLINE – EINRICHTUNG
+============================
+1. In Supabase ein NEUES Projekt für Snooker anlegen (empfohlen, unabhängig von Silvesterparty).
+2. SQL Editor öffnen, Inhalt aus 01_SUPABASE_SNOOKER.sql einfügen und ausführen.
+3. Authentication > Providers > Email: Email-Provider aktivieren und "Confirm email" DEAKTIVIEREN.
+   Wichtig: Diese Version verwendet intern eine technische Platzhalter-E-Mail aus dem Spielernamen.
+   Der Nutzer gibt KEINE E-Mail ein. Keine E-Mail-Wiederherstellung möglich!
+4. In config.js die Project URL und den Publishable Key (oder alten anon Key) eintragen.
+   NIEMALS den service_role / secret Key in die Webseite eintragen!
+5. index.html, online.js und config.js auf GitHub Pages hochladen.
+   Bereits vorhandene Dateien minigame.js, sw.js, manifest.webmanifest, Icons, satin-tuch.webp
+   und weitere Medien im GitHub-Repository BEHALTEN. Sie sind in diesem ZIP nicht enthalten.
+6. Die Webseite neu laden, "Online-Spiele öffnen", Benutzer registrieren und Raum starten.
+   Den 8-stelligen Raumcode an Mitspieler geben. Mitspieler registrieren sich ebenfalls.
+
+FUNKTION
+- Online-Spielstand wird ca. alle 1,1 Sekunden abgefragt und aktualisiert.
+- Alle Raumteilnehmer können Punkte erfassen.
+- Ein Server-Versionsvergleich nimmt bei gleichzeitigem Tippen nur die erste Änderung an.
+  Der andere Spieler erhält eine Meldung und den aktuellen Stand.
+- Keine SQL-Löschfunktion für Spiele, Mitglieder oder Historie.
+- Lokale Daten bleiben getrennt und können weiterhin exportiert werden.
+- Online-Raum verlassen löscht KEINE Daten in Supabase.
+
+WICHTIGE HINWEISE
+- Diese erste Version synchronisiert den Spielstand über kurze Abfragen (Polling),
+  nicht über eine dauerhafte Realtime-WebSocket-Verbindung.
+- Ein Nutzername ist auf 3–30 Zeichen a-z, 0-9, Punkt, Unterstrich und Bindestrich beschränkt.
+- Wegen technischer Platzhalter-E-Mail: Passwort-Rücksetzung per E-Mail funktioniert nicht.
+  Konten müssen bei Passwortverlust administrativ betreut werden.
+- Vorhandene Offline-Spiele werden nicht automatisch in Online-Spiele übertragen.
+- Die originalen Snooker-Mini-Spiel-Dateien werden weiterhin benötigt.
+- Die Online-Funktionen sind syntaktisch geprüft, aber ohne deine Supabase-Zugangsdaten
+  konnte kein vollständiger Live-Integrationstest erfolgen.
