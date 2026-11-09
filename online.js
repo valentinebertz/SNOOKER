@@ -18,11 +18,86 @@ async function onlineAuth(register){try{if(!sb)throw Error('Bitte config.js ausf
 async function onlineLogout(){await onlineLeave();await sb.auth.signOut();onlineUser=null;onlineRender()}
 async function rpc(name,args){const {data,error}=await sb.rpc(name,args||{});if(error)throw error;return Array.isArray(data)?data[0]:data}
 async function onlineList(){try{const {data,error}=await sb.rpc('snooker_my_games');if(error)throw error;const el=document.getElementById('on-rooms');if(el)el.innerHTML=data.length?data.map(r=>`<div class="history"><span>🎱 ${esc(r.code)} · ${esc((r.game?.teams||[]).map(t=>t.name).join(' : '))}</span><button class="btn alt small" onclick="onlineEnter('${r.id}')">Öffnen</button></div>`).join(''):'<p class="muted">Noch keine Online-Spiele.</p>'}catch(e){onlineMessage(e)}}
-async function onlineCreate(){if(onlineBusy)return;onlineBusy=true;try{const game={id:Date.now(),mode:'classic',teams:[1,2].map(i=>({name:'Team '+i,players:'',playerNames:[],score:0,bestBreak:0})),turn:0,actions:[],started:new Date().toISOString(),breakPoints:0,reds:15,phase:'red',nextColor:2};const r=await rpc('snooker_create',{p_game:game});await onlineAttach(r)}catch(e){onlineMessage(e)}finally{onlineBusy=false;if(onlineRoom)onlineShowGame()}}
+async function onlineCreate(){if(onlineBusy)return;onlineBusy=true;try{const game={id:Date.now(),mode:'classic',teams:[1,2].map(i=>({name:'Team '+i,players:'',playerNames:[],score:0,bestBreak:0})),turn:0,actions:[],started:new Date().toISOString(),breakPoints:0,reds:15,phase:'red',nextColor:2};const r=await rpc('snooker_create',{p_game:game});onlineBusy=false;await onlineAttach(r)}catch(e){onlineMessage(e)}finally{onlineBusy=false;if(onlineRoom)onlineShowGame()}}
 async function onlineJoin(){try{const code=document.getElementById('on-code').value.trim();const r=await rpc('snooker_join',{p_code:code});await onlineAttach(r)}catch(e){onlineMessage(e)}}
 async function onlineEnter(id){try{const r=await rpc('snooker_get',{p_id:id});if(!r)throw Error('Spiel nicht verfügbar');await onlineAttach(r)}catch(e){onlineMessage(e)}}
-async function onlineAttach(r){if(onlineRoom)await onlineLeave();onlineSnapshot={active:state.active,games:[...state.games]};onlineRoom=r;state.active=r.game?.ended?null:structuredClone(r.game);onlineShowGame();onlinePoll=setInterval(onlineRefresh,1100)}
-function onlineShowGame(){if(!onlineRoom)return onlineRender();onlinePage=false;tab='play';nav();if(onlineRoom.game?.ended){html(`<h1>🏆 Online-Spiel beendet</h1><div class="card">${resultLine(onlineRoom.game)}<button class="btn alt" onclick="onlineLeave()">Zur Raumübersicht</button></div>`)}else{state.active=structuredClone(onlineRoom.game);originalPlay();document.getElementById('app').insertAdjacentHTML('afterbegin',`<div class="notice">🌐 Live-Raum <b>${esc(onlineRoom.code)}</b> · ${onlineBusy?'🔒 Eingabe wird verarbeitet':'Alle dürfen zählen'} · <button class="btn alt small" onclick="onlineLeave()">Raum verlassen</button></div>`);if(onlineBusy)document.querySelectorAll('#app button').forEach(b=>{if(!b.getAttribute('onclick')?.includes('onlineLeave'))b.disabled=true})}}
+async function onlineAttach(r){
+ if(onlineRoom)await onlineLeave();
+ onlineSnapshot={active:state.active,games:[...state.games]};onlineRoom=r;
+ state.active=r.game?.ended?null:structuredClone(r.game);
+ onlineShowGame();onlinePoll=setInterval(onlineRefresh,1100);
+ await onlineRegisterPlayer();
+}
+// Der Spielerpool liegt im Spiel-JSON auf Supabase, nicht im lokalen Geräte-Speicher.
+function onlinePlayers(){return Array.isArray(onlineRoom?.game?.onlinePlayers)?onlineRoom.game.onlinePlayers:[]}
+function onlineMyName(){return (onlineUser?.email||'').split('@')[0]}
+function onlineIsHost(){return !!onlineRoom&&!!onlineUser&&onlineRoom.host_id===onlineUser.id}
+function onlineTeamOf(id){return (onlineRoom?.game?.teams||[]).findIndex(t=>Array.isArray(t.onlineMemberIds)&&t.onlineMemberIds.includes(id))}
+async function onlineUpdateGame(change){
+ if(!onlineRoom||!onlineUser)return;
+ if(onlineBusy)throw Error('Bitte kurz warten, eine Eingabe wird verarbeitet.');
+ onlineBusy=true;
+ try{
+  for(let attempt=0;attempt<5;attempt++){
+   const current=await rpc('snooker_get',{p_id:onlineRoom.id});
+   if(!current)throw Error('Spiel nicht mehr verfügbar');
+   const game=structuredClone(current.game);
+   if(!change(game,current)){
+    onlineRoom=current;state.active=game.ended?null:structuredClone(game);
+    return;
+   }
+   try{
+    const saved=await rpc('snooker_commit',{p_id:current.id,p_revision:current.revision,p_game:game});
+    onlineRoom=saved;state.active=saved.game?.ended?null:structuredClone(saved.game);
+    return;
+   }catch(e){
+    if(attempt===4||!/konflikt|conflict|version|revision/i.test(e.message||''))throw e;
+   }
+  }
+ }finally{onlineBusy=false;if(onlineRoom&&tab==='play')onlineShowGame()}
+}
+async function onlineRegisterPlayer(){
+ if(!onlineRoom||!onlineUser||onlineRoom.game?.ended)return;
+ try{
+  await onlineUpdateGame(game=>{
+   game.onlinePlayers=Array.isArray(game.onlinePlayers)?game.onlinePlayers:[];
+   if(game.onlinePlayers.some(p=>p.id===onlineUser.id))return false;
+   game.onlinePlayers.push({id:onlineUser.id,name:onlineMyName()});
+   return true;
+  });
+ }catch(e){onlineMessage(e)}
+}
+async function onlineAssignPlayer(playerId,teamIndex){
+ if(!onlineIsHost())return toast('Nur der Spielleiter darf Teams einteilen.');
+ try{
+  await onlineUpdateGame(game=>{
+   const players=Array.isArray(game.onlinePlayers)?game.onlinePlayers:[];
+   const player=players.find(p=>p.id===playerId);
+   if(!player)throw Error('Spieler nicht gefunden');
+   if(teamIndex < -1||teamIndex>=game.teams.length)throw Error('Ungültiges Team');
+   for(const team of game.teams){
+    team.onlineMemberIds=(team.onlineMemberIds||[]).filter(id=>id!==playerId);
+   }
+   if(teamIndex>=0)game.teams[teamIndex].onlineMemberIds.push(playerId);
+   for(const team of game.teams){
+    const names=(team.onlineMemberIds||[]).map(id=>players.find(p=>p.id===id)?.name).filter(Boolean);
+    team.playerNames=names;
+    team.players=names.join(', ');
+   }
+   return true;
+  });
+ }catch(e){onlineMessage(e)}
+}
+function onlineTeamPanel(){
+ if(!onlineRoom||onlineRoom.game?.ended)return '';
+ const players=onlinePlayers();const teams=onlineRoom.game.teams||[];const host=onlineIsHost();
+ return `<div class="card"><h2>👥 Gemeinsame Teamaufstellung</h2><p class="muted">Wer dem Raum beitritt, erscheint automatisch im gemeinsamen Spielerpool. ${host?'Du teilst die Spieler ein.':'Nur der Spielleiter teilt die Teams ein.'}</p>
+ <div class="grid2">${teams.map((t,i)=>`<div class="team"><b>${esc(t.name)}</b><div class="muted" style="margin-top:9px">${players.filter(p=>onlineTeamOf(p.id)===i).map(p=>`👤 ${esc(p.name)}`).join('<div style="height:6px"></div>')||'Noch keine Spieler'}</div></div>`).join('')}</div>
+ <h3 style="margin-top:17px">Spielerpool (${players.length})</h3>
+ ${players.length?players.map(p=>`<div class="history"><span>👤 ${esc(p.name)}<div class="muted">${onlineTeamOf(p.id)<0?'Noch nicht zugeteilt':esc(teams[onlineTeamOf(p.id)]?.name||'')}</div></span>${host?`<select aria-label="Team für ${esc(p.name)}" style="width:auto;max-width:55%" onchange="onlineAssignPlayer('${p.id}',Number(this.value))"><option value="-1" ${onlineTeamOf(p.id)<0?'selected':''}>Nicht zugeteilt</option>${teams.map((t,i)=>`<option value="${i}" ${onlineTeamOf(p.id)===i?'selected':''}>${esc(t.name)}</option>`).join('')}</select>`:''}</div>`).join(''):'<p class="muted">Noch keine Spieler beigetreten.</p>'}
+ </div>`;
+}
+function onlineShowGame(){if(!onlineRoom)return onlineRender();onlinePage=false;tab='play';nav();if(onlineRoom.game?.ended){html(`<h1>🏆 Online-Spiel beendet</h1><div class="card">${resultLine(onlineRoom.game)}<button class="btn alt" onclick="onlineLeave()">Zur Raumübersicht</button></div>`)}else{state.active=structuredClone(onlineRoom.game);originalPlay();document.getElementById('app').insertAdjacentHTML('afterbegin',onlineTeamPanel());document.getElementById('app').insertAdjacentHTML('afterbegin',`<div class="notice">🌐 Live-Raum <b>${esc(onlineRoom.code)}</b> · ${onlineBusy?'🔒 Eingabe wird verarbeitet':'Alle dürfen zählen'} · <button class="btn alt small" onclick="onlineLeave()">Raum verlassen</button></div>`);if(onlineBusy)document.querySelectorAll('#app select').forEach(el=>el.disabled=true);if(onlineBusy)document.querySelectorAll('#app button').forEach(b=>{if(!b.getAttribute('onclick')?.includes('onlineLeave'))b.disabled=true})}}
 async function onlineLeave(){if(onlinePoll){clearInterval(onlinePoll);onlinePoll=null}onlineRoom=null;onlineBusy=false;if(onlineSnapshot){state.active=onlineSnapshot.active;state.games=onlineSnapshot.games;onlineSnapshot=null}originalSave();onlineRender()}
 async function onlineRefresh(){if(!onlineRoom||onlineBusy)return;try{const r=await rpc('snooker_get',{p_id:onlineRoom.id});if(!r)return;if(r.revision!==onlineRoom.revision){onlineRoom=r;state.active=r.game?.ended?null:structuredClone(r.game);if(tab==='play')onlineShowGame();else if(onlinePage)onlineRender()}}catch(e){/* offline: nächste Abfrage erneut versuchen */}}
 // Lokale Speicherroutine wird im Online-Modus zu einer atomaren Serveränderung.
