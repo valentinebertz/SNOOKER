@@ -4,6 +4,30 @@ const SURL=window.SNOOKER_SUPABASE_URL, SKEY=window.SNOOKER_SUPABASE_ANON_KEY;
 const onlineReady=!!(SURL&&SKEY&&!SURL.startsWith('HIER_')&&!SKEY.startsWith('HIER_'));
 const sb=onlineReady&&window.supabase?.createClient(SURL,SKEY,{auth:{persistSession:true,autoRefreshToken:true}});
 let onlineUser=null,onlineRoom=null,onlineBusy=false,onlineSnapshot=null,onlinePoll=null,onlinePage=false;
+// Der zuletzt geöffnete Raum bleibt pro Konto auch nach App-Neustart erhalten.
+const ONLINE_ROOM_KEY='snooker-online-active-room-v1';
+function onlineStoredRoom(){try{const v=JSON.parse(localStorage.getItem(ONLINE_ROOM_KEY)||'null');return v?.userId===onlineUser?.id?v.roomId:null}catch(_){return null}}
+function onlineRememberRoom(){if(onlineUser&&onlineRoom)try{localStorage.setItem(ONLINE_ROOM_KEY,JSON.stringify({userId:onlineUser.id,roomId:onlineRoom.id}))}catch(_){}}
+function onlineForgetRoom(){try{localStorage.removeItem(ONLINE_ROOM_KEY)}catch(_){}}
+let onlineRestoring=null;
+async function onlineRestoreRoom(){
+ if(!sb||!onlineUser||onlineRoom)return false;
+ const id=onlineStoredRoom();if(!id)return false;
+ if(onlineRestoring)return onlineRestoring;
+ onlineRestoring=(async()=>{
+  try{
+   const r=await rpc('snooker_get',{p_id:id});
+   if(!r)throw Error('Raum nicht gefunden');
+   if(!onlineUser||onlineRoom)return false;
+   await onlineAttach(r);return true;
+  }catch(e){
+   // Netzwerkfehler: Raum merken und beim nächsten Start erneut versuchen.
+   toast('Raum konnte noch nicht geladen werden. Verbindung prüfen und erneut öffnen.');
+   return false;
+  }finally{onlineRestoring=null}
+ })();
+ return onlineRestoring;
+}
 const originalHome=home,originalSave=save,originalStart=startGame,originalGo=go,originalPlay=play;
 function onlineMessage(err){toast(err?.message||String(err))}
 function usernameEmail(name){const s=String(name||'').trim().toLowerCase();if(!/^[a-z0-9][a-z0-9_.-]{2,29}$/.test(s))throw Error('Name: 3–30 Zeichen, a–z, 0–9, Punkt, _ oder -');return s+'@snooker-login.example.com'}
@@ -11,21 +35,21 @@ function onlineBadge(){return `<div class="card"><h2>🌐 Online mit Freunden</h
 home=function(){originalHome();document.getElementById('app').insertAdjacentHTML('afterbegin',onlineBadge())};
 go=function(t){onlinePage=false;originalGo(t)};
 function onlineRender(){onlinePage=true;tab='online';nav();const who=onlineUser?.email?.split('@')[0]||'';
- html(`<h1>🌐 Online-Snooker</h1>${!onlineReady?`<div class="card"><h2>Supabase einrichten</h2><p class="muted">Trage zuerst Projekt-URL und Publishable/Anon-Key in <b>config.js</b> ein und führe die SQL-Datei aus.</p></div>`:!onlineUser?`<div class="card"><h2>Mit Spielername anmelden</h2><p class="muted">Keine E-Mail nötig. Merke dir Name und Passwort gut: ohne E-Mail gibt es keine automatische Passwort-Wiederherstellung.</p><div class="field"><label>Spielername (3–30 Zeichen)</label><input id="on-name" autocomplete="username" placeholder="waldemar"></div><div class="field"><label>Passwort (mindestens 6 Zeichen)</label><input id="on-pass" type="password" autocomplete="current-password"></div><div class="row"><button class="btn" onclick="onlineAuth(false)">Anmelden</button><button class="btn alt" onclick="onlineAuth(true)">Neu registrieren</button></div><p class="muted">Für die Registrierung muss in Supabase die E-Mail-Bestätigung ausgeschaltet sein.</p></div>`:`<div class="card"><div class="row" style="justify-content:space-between"><b>👤 ${esc(who)}</b><button class="btn alt small" onclick="onlineLogout()">Abmelden</button></div></div>${onlineRoom?`<div class="card"><h2>🎱 Raum ${esc(onlineRoom.code)}</h2><p class="muted">Alle angemeldeten Mitspieler dürfen Punkte eingeben. Der Server nimmt immer nur eine Änderung je Versionsstand an.</p><div class="row"><button class="btn" onclick="onlineShowGame()">Spielstand öffnen</button><button class="btn alt" onclick="onlineLeave()">Raum verlassen (nur hier)</button></div></div>`:`<div class="card"><h2>Eigenes Online-Spiel starten</h2><p class="muted">Richte Teams wie bisher auf der Startseite ein. Danach hier starten.</p><button class="btn" onclick="onlineCreate()">Neuen Raum mit 2 Teams starten</button><p class="muted">Die Teams heißen zunächst Team 1 und Team 2. Du kannst auch lokal weiter spielen.</p></div><div class="card"><h2>Spiel beitreten</h2><div class="field"><label>8-stelliger Spielcode</label><input id="on-code" maxlength="8" placeholder="z. B. A1B2C3D4" style="text-transform:uppercase"></div><button class="btn" onclick="onlineJoin()">Beitreten</button></div><div class="card"><h2>Meine Online-Spiele</h2><div id="on-rooms"><p class="muted">Lade Spiele …</p></div></div>`}`}`);
+ html(`<h1>🌐 Online-Snooker</h1>${!onlineReady?`<div class="card"><h2>Supabase einrichten</h2><p class="muted">Trage zuerst Projekt-URL und Publishable/Anon-Key in <b>config.js</b> ein und führe die SQL-Datei aus.</p></div>`:!onlineUser?`<div class="card"><h2>Mit Spielername anmelden</h2><p class="muted">Keine E-Mail nötig. Merke dir Name und Passwort gut: ohne E-Mail gibt es keine automatische Passwort-Wiederherstellung.</p><div class="field"><label>Spielername (3–30 Zeichen)</label><input id="on-name" autocomplete="username" placeholder="waldemar"></div><div class="field"><label>Passwort (mindestens 6 Zeichen)</label><input id="on-pass" type="password" autocomplete="current-password"></div><div class="row"><button class="btn" onclick="onlineAuth(false)">Anmelden</button><button class="btn alt" onclick="onlineAuth(true)">Neu registrieren</button></div><p class="muted">Für die Registrierung muss in Supabase die E-Mail-Bestätigung ausgeschaltet sein.</p></div>`:`<div class="card"><div class="row" style="justify-content:space-between"><b>👤 ${esc(who)}</b><button class="btn alt small" onclick="onlineLogout()">Abmelden</button></div></div>${!onlineRoom&&onlineStoredRoom()?`<div class="card"><h2>⏳ Gespeicherten Raum wieder öffnen</h2><p class="muted">Dein letzter Raum ist noch vorgemerkt. Bei Verbindungsproblemen bleibt er erhalten.</p><button class="btn" onclick="onlineRestoreRoom()">Raum erneut laden</button></div>`:''}${onlineRoom?`<div class="card"><h2>🎱 Raum ${esc(onlineRoom.code)}</h2><p class="muted">Alle angemeldeten Mitspieler dürfen Punkte eingeben. Der Server nimmt immer nur eine Änderung je Versionsstand an.</p><div class="row"><button class="btn" onclick="onlineShowGame()">Spielstand öffnen</button><button class="btn alt" onclick="onlineLeave()">Raum verlassen (nur hier)</button></div></div>`:`<div class="card"><h2>Eigenes Online-Spiel starten</h2><p class="muted">Richte Teams wie bisher auf der Startseite ein. Danach hier starten.</p><button class="btn" onclick="onlineCreate()">Neuen Raum mit 2 Teams starten</button><p class="muted">Die Teams heißen zunächst Team 1 und Team 2. Du kannst auch lokal weiter spielen.</p></div><div class="card"><h2>Spiel beitreten</h2><div class="field"><label>8-stelliger Spielcode</label><input id="on-code" maxlength="8" placeholder="z. B. A1B2C3D4" style="text-transform:uppercase"></div><button class="btn" onclick="onlineJoin()">Beitreten</button></div><div class="card"><h2>Meine Online-Spiele</h2><div id="on-rooms"><p class="muted">Lade Spiele …</p></div></div>`}`}`);
  if(onlineUser&&!onlineRoom)onlineList();}
-async function openOnline(){if(!sb)return onlineRender();try{const {data:{user}}=await sb.auth.getUser();onlineUser=user}catch(e){onlineMessage(e)}onlineRender()}
-async function onlineAuth(register){try{if(!sb)throw Error('Bitte config.js ausfüllen');const email=usernameEmail(document.getElementById('on-name').value),password=document.getElementById('on-pass').value;if(password.length<6)throw Error('Passwort mindestens 6 Zeichen');const {data,error}=register?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});if(error)throw error;if(!data.session)throw Error('E-Mail-Bestätigung in Supabase deaktivieren; keine echte E-Mail wird verwendet');onlineUser=data.user;onlineRender();toast(register?'Konto erstellt':'Angemeldet')}catch(e){onlineMessage(e)}}
-async function onlineLogout(){await onlineLeave();await sb.auth.signOut();onlineUser=null;onlineRender()}
+async function openOnline(){if(!sb)return onlineRender();try{const {data:{user}}=await sb.auth.getUser();onlineUser=user;if(await onlineRestoreRoom())return}catch(e){onlineMessage(e)}onlineRender()}
+async function onlineAuth(register){try{if(!sb)throw Error('Bitte config.js ausfüllen');const email=usernameEmail(document.getElementById('on-name').value),password=document.getElementById('on-pass').value;if(password.length<6)throw Error('Passwort mindestens 6 Zeichen');const {data,error}=register?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});if(error)throw error;if(!data.session)throw Error('E-Mail-Bestätigung in Supabase deaktivieren; keine echte E-Mail wird verwendet');onlineUser=data.user;if(!await onlineRestoreRoom())onlineRender();toast(register?'Konto erstellt':'Angemeldet')}catch(e){onlineMessage(e)}}
+async function onlineLogout(){if(onlineRoom&&!confirm('Du bist noch in einem Online-Raum. Wirklich abmelden und diesen Raum verlassen?'))return;if(onlineRoom)await onlineLeave(true);else onlineForgetRoom();await sb.auth.signOut();onlineUser=null;onlineRender()}
 async function rpc(name,args){const {data,error}=await sb.rpc(name,args||{});if(error)throw error;return Array.isArray(data)?data[0]:data}
 async function onlineList(){try{const {data,error}=await sb.rpc('snooker_my_games');if(error)throw error;const el=document.getElementById('on-rooms');if(el)el.innerHTML=data.length?data.map(r=>`<div class="history"><span>🎱 ${esc(r.code)} · ${esc((r.game?.teams||[]).map(t=>t.name).join(' : '))}</span><button class="btn alt small" onclick="onlineEnter('${r.id}')">Öffnen</button></div>`).join(''):'<p class="muted">Noch keine Online-Spiele.</p>'}catch(e){onlineMessage(e)}}
 async function onlineCreate(){if(onlineBusy)return;onlineBusy=true;try{const game={id:Date.now(),mode:'classic',teams:[1,2].map(i=>({name:'Team '+i,players:'',playerNames:[],score:0,bestBreak:0})),turn:0,actions:[],started:new Date().toISOString(),breakPoints:0,reds:15,phase:'red',nextColor:2};const r=await rpc('snooker_create',{p_game:game});onlineBusy=false;await onlineAttach(r)}catch(e){onlineMessage(e)}finally{onlineBusy=false;if(onlineRoom)onlineShowGame()}}
 async function onlineJoin(){try{const code=document.getElementById('on-code').value.trim();const r=await rpc('snooker_join',{p_code:code});await onlineAttach(r)}catch(e){onlineMessage(e)}}
 async function onlineEnter(id){try{const r=await rpc('snooker_get',{p_id:id});if(!r)throw Error('Spiel nicht verfügbar');await onlineAttach(r)}catch(e){onlineMessage(e)}}
 async function onlineAttach(r){
- if(onlineRoom)await onlineLeave();
+ if(onlineRoom)await onlineLeave(true);
  onlineSnapshot={active:state.active,games:[...state.games]};onlineRoom=r;
  state.active=r.game?.ended?null:structuredClone(r.game);
- onlineShowGame();onlinePoll=setInterval(onlineRefresh,1100);
+ onlineRememberRoom();onlineShowGame();onlinePoll=setInterval(onlineRefresh,1100);
  await onlineRegisterPlayer();
 }
 // Der Spielerpool liegt im Spiel-JSON auf Supabase, nicht im lokalen Geräte-Speicher.
@@ -98,7 +122,7 @@ function onlineTeamPanel(){
  </div>`;
 }
 function onlineShowGame(){if(!onlineRoom)return onlineRender();onlinePage=false;tab='play';nav();if(onlineRoom.game?.ended){html(`<h1>🏆 Online-Spiel beendet</h1><div class="card">${resultLine(onlineRoom.game)}<button class="btn alt" onclick="onlineLeave()">Zur Raumübersicht</button></div>`)}else{state.active=structuredClone(onlineRoom.game);originalPlay();document.getElementById('app').insertAdjacentHTML('afterbegin',onlineTeamPanel());document.getElementById('app').insertAdjacentHTML('afterbegin',`<div class="notice">🌐 Live-Raum <b>${esc(onlineRoom.code)}</b> · ${onlineBusy?'🔒 Eingabe wird verarbeitet':'Alle dürfen zählen'} · <button class="btn alt small" onclick="onlineLeave()">Raum verlassen</button></div>`);if(onlineBusy)document.querySelectorAll('#app select').forEach(el=>el.disabled=true);if(onlineBusy)document.querySelectorAll('#app button').forEach(b=>{if(!b.getAttribute('onclick')?.includes('onlineLeave'))b.disabled=true})}}
-async function onlineLeave(){if(onlinePoll){clearInterval(onlinePoll);onlinePoll=null}onlineRoom=null;onlineBusy=false;if(onlineSnapshot){state.active=onlineSnapshot.active;state.games=onlineSnapshot.games;onlineSnapshot=null}originalSave();onlineRender()}
+async function onlineLeave(confirmed=false){if(!confirmed&&!confirm('Diesen Online-Raum wirklich verlassen? Der Spielstand bleibt für alle in Supabase gespeichert.'))return;onlineForgetRoom();if(onlinePoll){clearInterval(onlinePoll);onlinePoll=null}onlineRoom=null;onlineBusy=false;if(onlineSnapshot){state.active=onlineSnapshot.active;state.games=onlineSnapshot.games;onlineSnapshot=null}originalSave();onlineRender()}
 async function onlineRefresh(){if(!onlineRoom||onlineBusy)return;try{const r=await rpc('snooker_get',{p_id:onlineRoom.id});if(!r)return;if(r.revision!==onlineRoom.revision){onlineRoom=r;state.active=r.game?.ended?null:structuredClone(r.game);if(tab==='play')onlineShowGame();else if(onlinePage)onlineRender()}}catch(e){/* offline: nächste Abfrage erneut versuchen */}}
 // Lokale Speicherroutine wird im Online-Modus zu einer atomaren Serveränderung.
 save=function(){if(!onlineRoom)return originalSave();if(!onlineBusy)return;const updated=state.active?structuredClone(state.active):structuredClone(state.games[0]);const previous=onlineRoom;rpc('snooker_commit',{p_id:previous.id,p_revision:previous.revision,p_game:updated}).then(r=>{if(!onlineRoom||onlineRoom.id!==r.id)return;onlineRoom=r;state.active=r.game?.ended?null:structuredClone(r.game);onlineBusy=false;if(tab==='play')onlineShowGame()}).catch(async e=>{onlineBusy=false;onlineMessage(e.message?.includes('KONFLIKT')?'Ein anderer Spieler war schneller. Spielstand wird aktualisiert.':e);try{const fresh=await rpc('snooker_get',{p_id:previous.id});if(fresh){onlineRoom=fresh;state.active=fresh.game?.ended?null:structuredClone(fresh.game)}}catch(_){}if(tab==='play')onlineShowGame()})};
@@ -112,4 +136,7 @@ for(const name of ['addPoints','foul','nextTurn','selectTurn','undo','earlyBlack
 }
 // Frühere Inline-Eventhandler nutzen globale Funktionen.
 window.addPoints=globalThis.addPoints;window.foul=globalThis.foul;window.nextTurn=globalThis.nextTurn;window.selectTurn=globalThis.selectTurn;window.undo=globalThis.undo;window.earlyBlack=globalThis.earlyBlack;window.finish=globalThis.finish;window.discard=globalThis.discard;
-(async()=>{if(!sb)return;const {data}=await sb.auth.getUser();onlineUser=data?.user||null})();
+(async()=>{if(!sb)return;try{const {data,error}=await sb.auth.getUser();if(error)throw error;onlineUser=data?.user||null;if(onlineUser)await onlineRestoreRoom()}catch(e){/* Beim nächsten Öffnen erneut versuchen. */}})();
+// Bei Wiederkehr aus dem Hintergrund aktuelle Serverdaten nachladen.
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&onlineRoom)onlineRefresh()});
+window.addEventListener('pageshow',()=>{if(onlineRoom)onlineRefresh();else if(onlineUser)onlineRestoreRoom()});
