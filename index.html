@@ -116,6 +116,18 @@
 .tabs .nav-icon .snooker-seven{width:29px;height:29px;font-size:29px;margin:0;vertical-align:middle;flex-shrink:0}
 .tabs .nav-icon .snooker-seven::after{font-size:.92em}
 .history-delete{margin-top:10px}
+
+/* Einheitliche Kugel-Ausrichtung in allen Bereichen */
+.snooker-seven{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;position:relative;top:0;transform:none;margin:0;line-height:1;flex-shrink:0}
+.snooker-seven::after{display:flex;align-items:center;justify-content:center;line-height:1;transform:none;position:static}
+.brand{display:flex;align-items:center;gap:10px;line-height:1;}
+.brand .snooker-seven{width:36px;height:36px;font-size:29px;align-self:center}
+.tabs button .nav-icon{display:flex;align-items:center;justify-content:center;height:34px;line-height:1}
+.tabs .nav-icon .snooker-seven{width:32px;height:32px;font-size:29px;align-self:center}
+h1 .snooker-seven,h2 .snooker-seven,h3 .snooker-seven{width:1.2em;height:1.2em;font-size:.88em;vertical-align:middle;margin-right:.16em}
+.btn .snooker-seven,.history .snooker-seven{width:1.25em;height:1.25em;font-size:1em;vertical-align:middle;margin-right:.12em}
+#snooker-host-room-banner .host-room-caption{display:flex;align-items:center;gap:7px;line-height:1.3}
+#snooker-host-room-banner .host-room-caption .snooker-seven{width:22px;height:22px;font-size:19px;vertical-align:middle;flex:none}
 </style></head><body><div class="wrap"><header class="top"><div><div class="brand">SNOO<b>KER</b> <span class="snooker-seven" aria-label="Schwarze Snookerkugel, 7 Punkte"></span></div><div class="sub">SCORE & FRIENDS · V2.0</div></div><span class="pill">● LOKAL & OFFLINE</span></header><main id="app"></main><div class="foot">Alle Spielstände werden ausschließlich auf diesem Gerät gespeichert. Für Gerätewechsel bitte ein Backup exportieren.</div></div><nav class="tabs" id="tabs"></nav><div id="toast" role="status"></div><div id="assign-modal" class="hidden" aria-live="polite"></div><div id="cheers-modal" class="hidden"></div><script>
 'use strict';const KEY='snooker-friends-v1';const colors=[['Rot',1,'#c9282e'],['Gelb',2,'#f2d338'],['Grün',3,'#1ba360'],['Braun',4,'#986136'],['Blau',5,'#2377e5'],['Pink',6,'#ec79b3'],['Schwarz',7,'#17191e']];const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));let state={games:[],active:null,playerPool:[]};try{const v=JSON.parse(localStorage.getItem(KEY));if(v&&Array.isArray(v.games))state={games:v.games,active:v.active||null,playerPool:Array.isArray(v.playerPool)?v.playerPool:[]}}catch(e){}// Einmalige Migration: Beispieldaten aus dem Spielerpool entfernen, ohne historische Spiele anzutasten.
 function cleanName(n){return String(n||'').trim().replace(/\s+/g,' ').slice(0,70)}

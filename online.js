@@ -282,6 +282,8 @@ window.addPoints=globalThis.addPoints;window.foul=globalThis.foul;window.nextTur
   #snooker-host-room-banner .host-room-inner{max-width:850px;margin:auto;display:flex;
     align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
   #snooker-host-room-banner .host-room-caption{font-size:12px;color:#b7d6c7}
+  #snooker-host-room-banner .host-room-caption{display:flex;align-items:center;gap:7px;line-height:1.3}
+  #snooker-host-room-banner .host-room-caption .snooker-seven{width:22px;height:22px;font-size:19px;vertical-align:middle;flex:none;top:0;margin:0}
   #snooker-host-room-banner .host-room-code{font-size:21px;font-weight:900;
     letter-spacing:2px;color:#f4c477;user-select:all}
   #snooker-host-room-banner button{border:1px solid #658b7b;border-radius:10px;
