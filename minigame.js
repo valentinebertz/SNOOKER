@@ -21,23 +21,15 @@ function initPractice(){
  if(!practice.frame)practice.frame=requestAnimationFrame(practiceLoop);
 }
 function newBall(type,x,y){return {type,x,y,vx:0,vy:0,live:true,r:R};}
-function showPracticeEnd(message){
- const overlay=document.getElementById('practice-end-overlay');
- const description=document.getElementById('practice-end-text');
- if(description)description.textContent=message;
- if(overlay){overlay.hidden=false;overlay.querySelector('button')?.focus();}
-}
-function hidePracticeEnd(){const overlay=document.getElementById('practice-end-overlay');if(overlay)overlay.hidden=true;}
 function resetPractice(){
- hidePracticeEnd();
  practice.balls=[];
  practice.balls.push(newBall('white',210,590));
  practice.balls.push(newBall('black',210,87));
  practice.balls.push(newBall('pink',210,240));
  practice.balls.push(newBall('blue',210,360));
- practice.balls.push(newBall('yellow',132,532));
+ practice.balls.push(newBall('yellow',288,532));
  practice.balls.push(newBall('brown',210,532));
- practice.balls.push(newBall('green',288,532));
+ practice.balls.push(newBall('green',132,532));
  // Apex points towards pink (towards baulk end). Fifteen reds.
  for(let row=0;row<5;row++)for(let j=0;j<=row;j++)
    practice.balls.push(newBall('red',210+(j-row/2)*15.5,190-row*14.0));
@@ -65,19 +57,7 @@ function respawnCueBall(){
 }
 function resetCueBall(){respawnCueBall()}
 
-function practiceMessage(t){
- const el=document.getElementById('practice-status');if(!el)return;
- if(t.startsWith('🎱')){
-  el.textContent='';
-  const ball=document.createElement('span');
-  ball.className='snooker-seven';
-  ball.setAttribute('role','img');
-  ball.setAttribute('aria-label','Schwarze Snookerkugel, 7 Punkte');
-  ball.style.cssText='width:1.3em;height:1.3em;vertical-align:middle;margin-right:.4em;';
-  el.appendChild(ball);
-  el.appendChild(document.createTextNode(t.slice(2).trimStart()));
- }else el.textContent=t;
-}
+function practiceMessage(t){const el=document.getElementById('practice-status');if(el)el.textContent=t}
 function ptFromEvent(e){
  const rect=practice.canvas.getBoundingClientRect();
  return {x:(e.clientX-rect.left)*PW/rect.width,y:(e.clientY-rect.top)*PH/rect.height};
@@ -148,25 +128,12 @@ function practiceLoop(t){
  drawPractice();
 }
 function physicsStep(dt){
- if(practice.finished)return;
  const balls=practice.balls;
  for(const b of balls){
   if(!b.live)continue;
   b.x+=b.vx*dt;b.y+=b.vy*dt;
   const pocket=POTS.find(([px,py])=>Math.hypot(b.x-px,b.y-py)<17);
-  if(pocket){
-   b.live=false;b.vx=b.vy=0;
-   if(b.type==='black'){
-    practice.finished=true;
-    practice.charging=false;practice.pointerId=null;practice.power=0;practice.aim=null;
-    const meter=document.getElementById('practice-power');if(meter)meter.style.width='0%';
-    for(const other of balls){other.live=false;other.vx=0;other.vy=0;}
-    practiceMessage('🏁 Spiel beendet – schwarze Kugel versenkt.');
-    showPracticeEnd('Die schwarze Kugel wurde versenkt. Der Tisch ist leer. Stelle die Kugeln neu auf, um eine neue Partie zu beginnen.');
-    return;
-   }
-   continue;
-  }
+  if(pocket){b.live=false;b.vx=b.vy=0;continue;}
   if(b.x<LEFT+R){b.x=LEFT+R;b.vx=Math.abs(b.vx)*.84}
   if(b.x>RIGHT-R){b.x=RIGHT-R;b.vx=-Math.abs(b.vx)*.84}
   if(b.y<TOP+R){b.y=TOP+R;b.vy=Math.abs(b.vy)*.84}
@@ -188,7 +155,7 @@ function physicsStep(dt){
  const cue=balls.find(b=>b.type==='white');
  if(cue&&!cue.live)respawnCueBall();
  if(!practice.finished&&balls.filter(b=>b.type!=='white'&&b.live).length===0){
-  practice.finished=true;practiceMessage('🏆 Alle farbigen und roten Kugeln versenkt! Mit „Tisch neu aufstellen“ neu starten.');
+  practice.finished=true;practiceMessage('🏆 Alle farbigen und roten Kugeln versenkt! Mit „Tisch abräumen“ neu starten.');
  }
 }
 
