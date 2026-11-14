@@ -25,7 +25,7 @@ function resetPractice(){
  practice.balls=[];
  practice.balls.push(newBall('white',210,590));
  practice.balls.push(newBall('black',210,87));
- practice.balls.push(newBall('pink',210,240));
+ practice.balls.push(newBall('pink',210,190+2*R));
  practice.balls.push(newBall('blue',210,360));
  practice.balls.push(newBall('yellow',132,532));
  practice.balls.push(newBall('brown',210,532));
