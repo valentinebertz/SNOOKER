@@ -75,7 +75,10 @@ go=function(t){
 // Der Startknopf startet offline eine neue Partie; bei einem bereits
 // verbundenen Online-Raum wird stattdessen dessen Partie fortgesetzt.
 startGame=function(){
-  if(onlineRoom){onlineShowGame();return;}
+   if(onlineRoom){
+     if(onlineRoom.game?.ended && onlineIsHost())return onlineStartNextGame();
+     onlineShowGame();return;
+   }
   originalStart();
 };
 function onlineRender(){onlinePage=true;tab='online';nav();const who=onlineUser?.email?.split('@')[0]||'';
@@ -240,10 +243,51 @@ function onlineTeamPanel(){
  ${players.length?players.map(p=>`<div class="history"><span>👤 ${esc(p.name)}<div class="muted">${onlineTeamOf(p.id)<0?'Noch nicht zugeteilt':esc(teams[onlineTeamOf(p.id)]?.name||'')}</div></span>${host?`<div class="row"><select aria-label="Team für ${esc(p.name)}" style="width:auto;max-width:170px" onchange="onlineAssignPlayer('${p.id}',Number(this.value))"><option value="-1" ${onlineTeamOf(p.id)<0?'selected':''}>Ohne Team</option>${teams.map((t,i)=>`<option value="${i}" ${onlineTeamOf(p.id)===i?'selected':''}>${esc(t.name)}</option>`).join('')}</select><button class="btn red small" title="Aus Spielerpool entfernen" onclick="onlineRemovePlayer('${p.id}')">Entfernen</button></div>`:''}</div>`).join(''):'<p class="muted">Noch keine Spieler beigetreten.</p>'}
  </div>`;
 }
+// Nach Spielende eine neue Partie IM SELBEN Raum beginnen.
+// Der abgeschlossene Spielstand wird im Raum archiviert, bevor er ersetzt wird.
+async function onlineStartNextGame(){
+ if(!onlineRoom||!onlineIsHost())return toast('Nur der Spielleiter kann eine neue Partie starten.');
+ if(onlineBusy)return toast('Bitte kurz warten.');
+ if(!onlineRoom.game?.ended)return onlineShowGame();
+ if(!confirm('Neue Partie mit 0 : 0 im selben Online-Raum starten? Die Teilnehmer und Teams bleiben erhalten.'))return;
+ try{
+  await onlineUpdateGame((game)=>{
+   if(game.sessionClosed)throw Error('Diese Session wurde bereits geschlossen.');
+   if(!game.ended)throw Error('Es läuft bereits eine neue Partie.');
+   const previous={...game};
+   delete previous.onlineHistory;
+   // Keine rekursiven Kopien der alten Spiele in der Historie speichern.
+   game.onlineHistory=[...(Array.isArray(game.onlineHistory)?game.onlineHistory:[]),previous];
+   game.id=Date.now();
+   game.teams=game.teams.map(team=>({...team,score:0,bestBreak:0}));
+   game.turn=0;
+   game.actions=[];
+   game.started=new Date().toISOString();
+   game.breakPoints=0;
+   game.reds=15;
+   game.phase='red';
+   game.nextColor=2;
+   delete game.ended;
+   delete game.endReason;
+   delete game.winners;
+   return true;
+  });
+  onlineShowGame();
+  toast('Neue Partie gestartet – 0 : 0. Alle bleiben im Raum.');
+ }catch(e){onlineMessage(e)}
+}
+
 function onlineShowGame(){if(!onlineRoom)return onlineRender();onlinePage=false;tab='play';nav();if(onlineRoom.game?.ended){
  const players=onlinePlayers(),teams=onlineRoom.game.teams||[];
- html(`<h1>🏆 Spiel beendet · Session läuft weiter</h1><div class="notice">🌐 Raum <b>${esc(onlineRoom.code)}</b> · Alle bleiben im Raum, bis der Spielleiter die Session schließt.</div><div class="card">${resultLine(onlineRoom.game)}</div><div class="card"><h2>👥 Teilnehmer und Teams</h2><div class="grid2">${teams.map((t,i)=>`<div class="team"><b>${esc(t.name)}</b><div class="muted">${players.filter(p=>onlineTeamOf(p.id)===i).map(p=>`👤 ${esc(p.name)}`).join('<div style="height:6px"></div>')||'Keine Spieler zugeteilt'}</div></div>`).join('')}</div><h3>Im Raum (${players.length})</h3>${players.map(p=>`<div class="history">👤 ${esc(p.name)}</div>`).join('')||'<p class="muted">Keine registrierten Teilnehmer</p>'}<p class="muted">Du bleibst in dieser Session – auch beim Neuladen der App.</p>${onlineIsHost()?'<button class="btn red" onclick="onlineCloseSession()">🔒 Session für alle schließen</button>':'<p class="notice">Warte, bis der Spielleiter die Session schließt.</p>'}</div>`);
+ html(`<h1>🏆 Spiel beendet · Session läuft weiter</h1><div class="notice">🌐 Raum <b>${esc(onlineRoom.code)}</b> · Alle bleiben im Raum, bis der Spielleiter die Session schließt.</div><div class="card">${resultLine(onlineRoom.game)}</div><div class="card"><h2>👥 Teilnehmer und Teams</h2><div class="grid2">${teams.map((t,i)=>`<div class="team"><b>${esc(t.name)}</b><div class="muted">${players.filter(p=>onlineTeamOf(p.id)===i).map(p=>`👤 ${esc(p.name)}`).join('<div style="height:6px"></div>')||'Keine Spieler zugeteilt'}</div></div>`).join('')}</div><h3>Im Raum (${players.length})</h3>${players.map(p=>`<div class="history">👤 ${esc(p.name)}</div>`).join('')||'<p class="muted">Keine registrierten Teilnehmer</p>'}<p class="muted">Du bleibst in dieser Session – auch beim Neuladen der App.</p>${onlineIsHost()?'<div class="row"><button class="btn" onclick="onlineStartNextGame()">⚫ Neues Spiel starten</button><button class="btn red" onclick="onlineCloseSession()">🔒 Session für alle schließen</button></div>':'<p class="notice">Warte, bis der Spielleiter die nächste Partie startet oder die Session schließt.</p>'}</div>`);
  }else{state.active=structuredClone(onlineRoom.game);originalPlay();document.getElementById('app').insertAdjacentHTML('afterbegin',onlineTeamPanel());document.getElementById('app').insertAdjacentHTML('afterbegin',`<div class="notice">🌐 Live-Raum <b>${esc(onlineRoom.code)}</b> · ${onlineBusy?'🔒 Eingabe wird verarbeitet':'Alle dürfen zählen'} · <button class="btn alt small" onclick="onlineLeave()">Raum verlassen</button></div>`);if(onlineBusy)document.querySelectorAll('#app select').forEach(el=>el.disabled=true);if(onlineBusy)document.querySelectorAll('#app button').forEach(b=>{if(!b.getAttribute('onclick')?.includes('onlineLeave'))b.disabled=true})}}
+// Abgeschlossene Partien dieser Online-Session bleiben nach dem Neustart sichtbar.
+function onlineShowHistory(){
+ const past=onlineRoom?.game?.onlineHistory;
+ if(!Array.isArray(past)||!past.length||tab!=='play')return;
+ const app=document.getElementById('app');if(!app)return;
+ app.insertAdjacentHTML('beforeend',`<div class="card"><h2>📅 Frühere Partien in diesem Raum</h2>${[...past].reverse().map(g=>resultLine(g)).join('')}</div>`);
+}
 async function onlineCloseSession(){
  if(!onlineRoom||!onlineIsHost())return toast('Nur der Spielleiter kann die Session schließen');
  if(!onlineRoom.game?.ended)return toast('Bitte zuerst das Spiel beenden');
@@ -319,7 +363,7 @@ window.addPoints=globalThis.addPoints;window.foul=globalThis.foul;window.nextTur
   banner.querySelector('.host-room-code').textContent=String(onlineRoom.code);
  }
  const oldShowGame=onlineShowGame;
- onlineShowGame=function(...args){const result=oldShowGame(...args);syncHostRoomBanner();return result};
+ onlineShowGame=function(...args){const result=oldShowGame(...args);onlineShowHistory();syncHostRoomBanner();return result};
  const oldRender=onlineRender;
  onlineRender=function(...args){const result=oldRender(...args);syncHostRoomBanner();return result};
  const oldGo=go;
