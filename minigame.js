@@ -33,7 +33,7 @@ function resetPractice(){
  // Apex points towards pink (towards baulk end). Fifteen reds.
  for(let row=0;row<5;row++)for(let j=0;j<=row;j++)
    practice.balls.push(newBall('red',210+(j-row/2)*15.5,190-row*14.0));
- practice.finished=false;practice.charging=false;practice.aim=null;practice.power=0;practice.shotPreview=null;practice.pointerId=null;
+ practice.finished=false;practice.finishReason=null;practice.charging=false;practice.aim=null;practice.power=0;practice.shotPreview=null;practice.pointerId=null;
  practiceMessage('🎯 Halten = Kraft laden, Loslassen = Stoßen. Zielwechsel setzt die Kraft auf 0 %.');
 }
 function respawnCueBall(){
@@ -166,7 +166,7 @@ function physicsStep(dt){
  const cue=balls.find(b=>b.type==='white');
  if(cue&&!cue.live)respawnCueBall();
  if(!practice.finished&&balls.filter(b=>b.type!=='white'&&b.live).length===0){
-  practice.finished=true;practiceMessage('🏆 Alle farbigen und roten Kugeln versenkt! Mit „Tisch neu aufstellen“ neu starten.');
+  practice.finished=true;practice.finishReason='all';practiceMessage('🏆 Alle farbigen und roten Kugeln versenkt! Mit „Tisch neu aufstellen“ neu starten.');
  }
 }
 
@@ -263,6 +263,21 @@ function drawPractice(){
   }
  }
 
+ // Gut sichtbare Abschlussmeldung direkt auf dem Tisch.
+ if(practice.finished){
+  c.save();
+  c.fillStyle='rgba(4,23,19,.94)';c.strokeStyle='#f4c477';c.lineWidth=3;
+  c.beginPath();c.roundRect(48,268,324,164,18);c.fill();c.stroke();
+  c.textAlign='center';c.textBaseline='middle';
+  c.fillStyle='#ffe4a1';c.font='bold 27px sans-serif';
+  c.fillText('Spiel beendet!',210,310);
+  c.fillStyle='#ffffff';c.font='bold 18px sans-serif';
+  c.fillText(practice.finishReason==='black'?'Schwarze Kugel eingelocht!':'Alle Kugeln eingelocht!',210,352);
+  c.font='15px sans-serif';
+  c.fillText('Mit „Tisch neu aufstellen“',210,389);
+  c.fillText('ein neues Spiel beginnen.',210,410);
+  c.restore();
+ }
 }
 function rayWall(ball,ux,uy){
  // Robust against zero components and exact rail positions.
