@@ -27,9 +27,9 @@ function resetPractice(){
  practice.balls.push(newBall('black',210,87));
  practice.balls.push(newBall('pink',210,240));
  practice.balls.push(newBall('blue',210,360));
- practice.balls.push(newBall('yellow',288,532));
+ practice.balls.push(newBall('yellow',132,532));
  practice.balls.push(newBall('brown',210,532));
- practice.balls.push(newBall('green',132,532));
+ practice.balls.push(newBall('green',288,532));
  // Apex points towards pink (towards baulk end). Fifteen reds.
  for(let row=0;row<5;row++)for(let j=0;j<=row;j++)
    practice.balls.push(newBall('red',210+(j-row/2)*15.5,190-row*14.0));
