@@ -128,12 +128,23 @@ function practiceLoop(t){
  drawPractice();
 }
 function physicsStep(dt){
+ if(practice.finished)return;
  const balls=practice.balls;
  for(const b of balls){
   if(!b.live)continue;
   b.x+=b.vx*dt;b.y+=b.vy*dt;
   const pocket=POTS.find(([px,py])=>Math.hypot(b.x-px,b.y-py)<17);
-  if(pocket){b.live=false;b.vx=b.vy=0;continue;}
+  if(pocket){
+    b.live=false;b.vx=b.vy=0;
+    if(b.type==='black'){
+     practice.finished=true;
+     practice.charging=false;practice.aim=null;practice.power=0;practice.pointerId=null;
+     for(const other of balls){other.vx=0;other.vy=0;}
+     practiceMessage('🏆 Spiel beendet! Die schwarze Kugel wurde eingelocht. Mit „Tisch neu aufstellen“ neu starten.');
+     return;
+    }
+    continue;
+   }
   if(b.x<LEFT+R){b.x=LEFT+R;b.vx=Math.abs(b.vx)*.84}
   if(b.x>RIGHT-R){b.x=RIGHT-R;b.vx=-Math.abs(b.vx)*.84}
   if(b.y<TOP+R){b.y=TOP+R;b.vy=Math.abs(b.vy)*.84}
@@ -155,7 +166,7 @@ function physicsStep(dt){
  const cue=balls.find(b=>b.type==='white');
  if(cue&&!cue.live)respawnCueBall();
  if(!practice.finished&&balls.filter(b=>b.type!=='white'&&b.live).length===0){
-  practice.finished=true;practiceMessage('🏆 Alle farbigen und roten Kugeln versenkt! Mit „Tisch abräumen“ neu starten.');
+  practice.finished=true;practiceMessage('🏆 Alle farbigen und roten Kugeln versenkt! Mit „Tisch neu aufstellen“ neu starten.');
  }
 }
 
